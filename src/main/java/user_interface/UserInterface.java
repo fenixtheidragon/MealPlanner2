@@ -1,15 +1,15 @@
 package user_interface;
 
-import user_interface.menus.MenuSystem;
+import user_interface.menus.AllMenusSystem;
 
 public class UserInterface {
-    private MenuSystem menuSystem;
+    private AllMenusSystem allMenusSystem;
 
     public UserInterface() {
-        this.menuSystem = new MenuSystem();
+        this.allMenusSystem = new AllMenusSystem();
     }
 
     public void start() {
-        menuSystem.enter();
+        allMenusSystem.start();
     }
 }

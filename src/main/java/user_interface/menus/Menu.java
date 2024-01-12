@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 @Getter
-public class Menu{
+public class Menu implements IMenu{
     private final String NAME;
     private final ArrayList<MenuOption> menuOptions;
     private final Scanner scanner;
@@ -17,13 +17,13 @@ public class Menu{
         this.scanner = scanner;
     }
 
-    public Menu(Menu menu) {
+    public Menu(IMenu menu) {
         this.NAME = menu.getNAME();
         this.menuOptions = menu.getMenuOptions();
         this.scanner = menu.getScanner();
     }
 
-    protected MenuOption printMenuScanAndReturnOption() {
+    public MenuOption printMenuScanAndReturnOption() {
         System.out.println(this);
         String input = scanner.nextLine();
         return getMenuOptionBy(input);
@@ -38,10 +38,6 @@ public class Menu{
             }
         }
         return MenuOption.DEFAULT;
-    }
-
-    public void show() {
-
     }
 
     @Override

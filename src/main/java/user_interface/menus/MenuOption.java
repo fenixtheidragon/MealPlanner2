@@ -15,18 +15,18 @@ public enum MenuOption {
     MEAL_MENU("Meal menu"),
     WEEKLY_PLAN_MENU("Weekly plan menu"),
     INGREDIENTS_MENU("List of ingredients menu"),
-    //meal menu options(+return):
+    //meal menu options(+return to previous menu):
     SHOW_MEALS("Show meals"),
     ADD_MEAL("Add meal"),
     EDIT_MEAL("Edit meal"),
     DELETE_MEAL("Delete meal"),
-    //weekly plan menu options(+return):
+    //weekly plan menu options(+return to previous menu):
     SHOW_WEEKLY_PLAN("Show weekly plan"),
     EDIT_DAY("Edit day"),
     COPY_DAY("Copy day"),
     CLEAR_DAY("Clear day"),
     CLEAR_WEEK("Clear week"),
-    //ingredients menu options(+return):
+    //ingredients menu options(+return to previous menu):
     SHOW_INGREDIENTS("Show weekly plan"),
     ADD_INGREDIENTS("Add ingredients"),
     DELETE_INGREDIENTS("Delete ingredients");
