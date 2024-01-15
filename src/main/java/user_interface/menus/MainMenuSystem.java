@@ -25,9 +25,9 @@ public class MainMenuSystem {
     }
 
     public void open() {
-        this.option = mainMenu.printMenuScanAndReturnOption();
         this.isAlive = true;
         while (isAlive) {
+            this.option = mainMenu.printMenuScanAndReturnOption();
             switch (option) {
                 case MEAL_MENU -> mealMenu.open();
                 //case WEEKLY_PLAN_MENU -> weeklyPlanMenu.open();
