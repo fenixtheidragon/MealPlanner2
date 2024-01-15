@@ -3,7 +3,6 @@ package user_interface.menus;
 import java.util.Scanner;
 
 import static user_interface.menus.MenuOption.*;
-import static user_interface.menus.MenuOption.INGREDIENTS_MENU;
 
 public class MainMenuSystem {
     private final Menu mainMenu;

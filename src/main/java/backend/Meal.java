@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
-@Setter
 public class Meal {
     private String name;
     private MealType type;
@@ -25,6 +24,11 @@ public class Meal {
         this.name = name;
         setType(type);
         setIngredients(ingredients);
+    }
+
+    public boolean setName(String input) {
+        name = input.trim();
+        return !name.isBlank();
     }
 
     public boolean setType(String input) {

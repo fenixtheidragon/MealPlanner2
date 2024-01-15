@@ -1,48 +1,47 @@
 package user_interface.menus;
 
 import backend.Meal;
-import backend.crud.CRUDStatements;
-import backend.crud.SQLExecutor;
-import backend.crud.SQLExecutorForMealsDB;
-
+import backend.crud.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class MealMenu extends Menu implements IMenu {
-	private final static String URL = "jdbc:postgresql:meals_db";
-	private final static String userOrPassword = "postgres";
-	private MenuOption option;
-	private boolean isOpen;
-	private SQLExecutor sqlExecutor;
+    private final SQLExecutorForMealsDB sqlExecutor;
 
 	public MealMenu(String name, ArrayList<MenuOption> menuOptions, Scanner scanner) {
 		super(name, menuOptions, scanner);
-		this.sqlExecutor = new SQLExecutor(URL,userOrPassword,userOrPassword);
+		this.sqlExecutor = new SQLExecutorForMealsDB();
 	}
 
 	public MealMenu(IMenu menu) {
 		super(menu);
-		this.sqlExecutor = new SQLExecutor(URL,userOrPassword,userOrPassword);
+		this.sqlExecutor = new SQLExecutorForMealsDB();
 	}
 
 	public void open() {
-		this.isOpen = true;
+        boolean isOpen = true;
 		while (isOpen) {
-			option = printMenuScanAndReturnOption();
+            MenuOption option = printMenuScanAndReturnOption();
 			switch (option) {
 				case SHOW_MEALS -> showMeals();
 				case ADD_MEAL -> addMeal();
 				//case EDIT_MEAL -> editMeal();
-				//case DELETE_MEAL -> deleteMeal();
-				case MAIN_MENU -> this.isOpen = false;
+				case DELETE_MEAL -> deleteMeal();
+				case MAIN_MENU -> isOpen = false;
 				default -> System.out.println("Invalid meal menu option");
 			}
 		}
 	}
 
+	private void deleteMeal() {
+		System.out.print("Choose to be deleted meal: ");
+		String mealName = getScanner().nextLine();
+		System.out.println(sqlExecutor.execute(CRUDStatements.getSelectColumnFromTableStatement("meals", mealName)));
+	}
+
 	private void showMeals() {
-		sqlExecutor.execute(CRUDStatements.getSelectAllFromStatement("meals"));
+		System.out.println(sqlExecutor.execute(CRUDStatements.getSelectAllColumnsFromTableStatement("meals")));
 	}
 
 	private void addMeal() {
@@ -51,7 +50,7 @@ public class MealMenu extends Menu implements IMenu {
 		String name = getScanner().nextLine();
 		meal.setName(name);
 		//
-		String type = "a";
+		String type;
 		System.out.print("Enter meal's category or make it \"uncategorized\" by pressing enter: ");
 		type = getScanner().nextLine();
 		meal.setType(type);
