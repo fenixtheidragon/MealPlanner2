@@ -27,12 +27,12 @@ public enum MealType {
 		return MealType.UNCATEGORIZED;
 	}
 
-	@Override
-	public String toString() {
+	public static String getDescription() {
 		StringBuilder sb = new StringBuilder();
 		for (MealType type : MealType.values()) {
-			sb.append(type.getNumber()).append(". ").append(type.getName()).append(";");
+			sb.append(type.getNumber()).append(". ").append(type.getName()).append(";").append(System.lineSeparator());
 		}
+		sb.delete(sb.length()-1,sb.length());
 		return sb.toString();
 	}
 }

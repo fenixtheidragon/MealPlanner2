@@ -17,7 +17,7 @@ public class Meal {
     public Meal() {
         this.name = "";
         this.type = MealType.UNCATEGORIZED;
-        this.ingredients = new ArrayList<>(List.of(""));
+        this.ingredients = new ArrayList<>();
     }
 
     public Meal(String name, String type, String ingredients) {
@@ -37,10 +37,12 @@ public class Meal {
     }
 
     public boolean setIngredients(String input) {
-        if (input.matches("[a-zA-Z\\d ]+(\\s*,\\s*[a-zA-Z\\d ]+)*")) {
+        if (input.matches("[a-zA-Z\\d]+(\\s*,\\s*[a-zA-Z\\d]+)*")) {
+            this.ingredients = new ArrayList<>();
             ArrayList<String> ingredients = Arrays.stream(input.split(",")).collect(Collectors.toCollection(ArrayList::new));
             for (String ingredient : ingredients) {
-                if (!ingredient.isBlank()) this.ingredients.add(ingredient.trim());
+                ingredient = ingredient.trim();
+                if (!ingredient.isBlank()) this.ingredients.add(ingredient);
             }
             return true;
         } else return false;

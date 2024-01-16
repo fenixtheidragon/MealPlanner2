@@ -41,7 +41,11 @@ public class SQLExecutor {
 					try (ResultSet resultSet = executeQuery(sql)) {
 						StringJoiner result = new StringJoiner(System.lineSeparator());
 						while (resultSet.next()) {
-							result.add(resultSet.getString("name"));
+							StringJoiner tempResult = new StringJoiner("|");
+							tempResult.add(resultSet.getString("id"));
+							tempResult.add(resultSet.getString("name"));
+							tempResult.add(resultSet.getString("category"));
+							result.add(tempResult.toString());
 						}
 						return result.toString();
 					} catch (SQLException e) {
