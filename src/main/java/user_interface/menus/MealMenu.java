@@ -4,11 +4,15 @@ import backend.Meal;
 import backend.MealType;
 import backend.crud.*;
 
+import static backend.crud.DataBaseNameConstants.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class MealMenu extends Menu implements IMenu {
+
+
     private final SQLExecutorForMealsDB sqlExecutor;
     private Meal meal;
 
@@ -38,7 +42,7 @@ public class MealMenu extends Menu implements IMenu {
     }
 
     private void showMeals() {
-        System.out.println(sqlExecutor.execute(CRUDStatements.getSelectAllColumnsFromTableStatement("meals")));
+        System.out.println(sqlExecutor.execute(CRUDStatements.getSelectAllColumnsFromTableStatement()));
     }
 
     private void enterName() {
@@ -68,9 +72,10 @@ public class MealMenu extends Menu implements IMenu {
         enterName();
         enterCategory();
         enterIngredients();
-        sqlExecutor.execute(CRUDStatements.getInsertIntoStatement("meals", List.of("name", "category"), List.of(meal.getName(), meal.getType().getName())));
+        sqlExecutor.execute(CRUDStatements.getInsertIntoStatement(TABLE_MEALS, List.of(COLUMN_NAME, TABLE_MEALS_COLUMN_CATEGORY),
+                List.of(meal.getName(), meal.getType().getName())));
         for (String ingredient : meal.getIngredients()) {
-            sqlExecutor.execute((CRUDStatements.getInsertIntoStatement("ingredients", List.of("name"), List.of(ingredient))));
+            sqlExecutor.execute((CRUDStatements.getInsertIntoStatement(TABLE_INGREDIENTS, List.of(COLUMN_NAME), List.of(ingredient))));
         }
     }
 
@@ -79,7 +84,8 @@ public class MealMenu extends Menu implements IMenu {
         showMeals();
         System.out.print("Enter id of the meal you want to edit: ");
         String mealID = getScanner().nextLine();
-        String mealDescription = sqlExecutor.execute(CRUDStatements.getSelectAllColumnsFromTableWhereColumnEqualsValueStatement("meals", "id", mealID));
+        String mealDescription = sqlExecutor.execute(
+                CRUDStatements.getSelectAllColumnsFromTableWhereColumnEqualsValueStatement(TABLE_MEALS, COLUMN_MEAL_ID, mealID));
         mealDescription = mealDescription.substring(0, mealID.length());
         if (!mealDescription.isBlank() && mealDescription.equals(mealID)) {
             boolean condition = true;
@@ -106,7 +112,8 @@ public class MealMenu extends Menu implements IMenu {
                         executeUpdateOfMeal("meals", "name", meal.getName(), mealID);
                         executeUpdateOfMeal("meals", "category", meal.getType().getName(), mealID);
                         for (String ingredient : meal.getIngredients()) {
-                            executeUpdateOfMeal("ingredients", "name", ingredient, mealID);
+                            sqlExecutor.execute(CRUDStatements.getSelectExistsSelectStatement(CRUDStatements.getSelectColumnFromTableWhereColumnEqualsValue("meals"))
+                                    executeUpdateOfMeal("meal_to_ingredient_relation", "ingredient_id", ingredient, mealID);
                         }
                         System.out.println("Saved edit");
                     }

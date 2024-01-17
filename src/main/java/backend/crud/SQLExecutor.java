@@ -42,7 +42,7 @@ public class SQLExecutor {
 						StringJoiner result = new StringJoiner(System.lineSeparator());
 						while (resultSet.next()) {
 							StringJoiner tempResult = new StringJoiner("|");
-							tempResult.add(resultSet.getString("id"));
+							tempResult.add(resultSet.getString("meal_id"));
 							tempResult.add(resultSet.getString("name"));
 							tempResult.add(resultSet.getString("category"));
 							result.add(tempResult.toString());

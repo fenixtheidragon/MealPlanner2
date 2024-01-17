@@ -8,11 +8,28 @@ public class CRUDStatements {
     private final static String FROM = "FROM";
     private final static String WHERE = "WHERE";
     private final static String INSERT_INTO = "INSERT INTO";
+    private final static String EXISTS = "EXISTS";
     private final static String SEMICOLON = ";";
     private final static String APOSTROPHE = "'";
+    private final static String LEFT_PARENTHESIS = "(";
+    private final static String RIGHT_PARENTHESIS = ")";
+
+
+    public static String getSelectExistsSelectStatement(String selectStatement) {
+        return new StringJoiner(" ").add(SELECT).add(EXISTS)
+                .add(LEFT_PARENTHESIS).add(selectStatement.substring(0, selectStatement.length() - 1)).add(RIGHT_PARENTHESIS).add(SEMICOLON).toString();
+    }
 
     public static String getSelectColumnFromTableStatement(String table, String column) {
         return new StringJoiner(" ").add(SELECT).add(column).add(FROM).add(table).add(";").toString();
+    }
+
+    public static String getSelectColumnFromTableWhereColumnEqualsValue(String table, String column1, String column2, String value) {
+        StringBuilder result = new StringBuilder(getSelectColumnFromTableStatement(table, column1));
+        result.replace(result.length() - 1, result.length(), " ");
+        result.append("WHERE ").append(column2).append(" = ").append(value);
+        System.out.println(result);
+        return result.toString();
     }
 
     public static String getSelectAllColumnsFromTableStatement(String table) {
