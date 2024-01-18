@@ -16,8 +16,10 @@ public class CRUDStatements {
 
 
     public static String getSelectExistsSelectStatement(String selectStatement) {
-        return new StringJoiner(" ").add(SELECT).add(EXISTS)
-                .add(LEFT_PARENTHESIS).add(selectStatement.substring(0, selectStatement.length() - 1)).add(RIGHT_PARENTHESIS).add(SEMICOLON).toString();
+        StringJoiner sj = new StringJoiner(" ").add(SELECT).add(EXISTS)
+                .add(LEFT_PARENTHESIS).add(selectStatement.substring(0, selectStatement.length() - 1)).add(RIGHT_PARENTHESIS).add(SEMICOLON);
+        System.out.println(sj);
+        return sj.toString();
     }
 
     public static String getSelectColumnFromTableStatement(String table, String column) {
@@ -27,7 +29,7 @@ public class CRUDStatements {
     public static String getSelectColumnFromTableWhereColumnEqualsValue(String table, String column1, String column2, String value) {
         StringBuilder result = new StringBuilder(getSelectColumnFromTableStatement(table, column1));
         result.replace(result.length() - 1, result.length(), " ");
-        result.append("WHERE ").append(column2).append(" = ").append(value);
+        result.append("WHERE ").append(column2).append(" = ").append(APOSTROPHE+value+APOSTROPHE).append(SEMICOLON);
         System.out.println(result);
         return result.toString();
     }
@@ -55,8 +57,8 @@ public class CRUDStatements {
         return sb.toString();
     }
 
-    public static String getUpdateTableSetColumnToValueWhereIDEqualsValue(String table, String column, String value, String ID) {
-        return "UPDATE " + table + " SET " + column + " = '" + value + "' WHERE id = " + ID + SEMICOLON;
+    public static String getUpdateTableSetColumn1ToValueWhereColumn2EqualsValue(String table, String column1,String value1, String column2, String value2) {
+        return "UPDATE " + table + " SET " + column1 + " = '" + value1 + "' WHERE "+ column2+" = " + value2 + SEMICOLON;
     }
 
     public static String getDeleteFromTableWhereColumnEqualsValue(String table, String column, String value) {
