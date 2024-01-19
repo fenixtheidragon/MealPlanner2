@@ -42,7 +42,7 @@ public class MealMenu extends Menu implements IMenu {
     }
 
     private void showMeals() {
-        System.out.println(sqlExecutor.execute(CRUDStatements.getSelectAllColumnsFromTableStatement(TABLE_MEALS)));
+        System.out.println(sqlExecutor.execute(SQLStatements.getSelectAllColumnsFromTableStatement(TABLE_MEALS)));
     }
 
     private void enterName() {
@@ -56,7 +56,7 @@ public class MealMenu extends Menu implements IMenu {
         System.out.println(MealType.getDescription());
         System.out.print("Enter meal's category or make it \"uncategorized\" by pressing enter: ");
         type = getScanner().nextLine();
-        meal.setType(type);
+        meal.setCategory(type);
     }
 
     private void enterIngredients() {
@@ -71,19 +71,18 @@ public class MealMenu extends Menu implements IMenu {
         meal = new Meal();
         enterName();
         enterCategory();
-        sqlExecutor.execute(CRUDStatements.getInsertIntoStatement(TABLE_MEALS, List.of(COLUMN_NAME, COLUMN_CATEGORY),
-                List.of(meal.getName(), meal.getType().getName())));
-        String meal_ID =
-                sqlExecutor.execute(CRUDStatements.getSelectColumnFromTableWhereColumnEqualsValue(TABLE_MEALS, COLUMN_MEAL_ID, COLUMN_NAME, meal.getName()));
-        sqlExecutor.execute(CRUDStatements.getInsertIntoStatement(TABLE_MEAL_TO_INGREDIENT, List.of(COLUMN_MEAL_ID), List.of(meal_ID)));
+        sqlExecutor.execute(SQLStatements.getInsertIntoStatement(TABLE_MEALS, List.of(COLUMN_NAME, COLUMN_CATEGORY),
+                List.of(meal.getName(), meal.getCategory().getName())));
+        String meal_ID = sqlExecutor.execute(SQLStatements.getSelectColumnFromTableWhereColumnEqualsValue(TABLE_MEALS, COLUMN_MEAL_ID, COLUMN_NAME, meal.getName()));
+        sqlExecutor.execute(SQLStatements.getInsertIntoStatement(TABLE_MEAL_TO_INGREDIENT, List.of(COLUMN_MEAL_ID), List.of(meal_ID)));
         //
         enterIngredients();
         List<String> ingredient_IDs = new ArrayList<>();
         String ingredientID;
         for (String ingredient : meal.getIngredients()) {
-            sqlExecutor.execute((CRUDStatements.getInsertIntoStatement(TABLE_INGREDIENTS, List.of(COLUMN_NAME), List.of(ingredient))));
-            ingredientID = sqlExecutor.execute(
-                    CRUDStatements.getSelectColumnFromTableWhereColumnEqualsValue(TABLE_INGREDIENTS, COLUMN_INGREDIENT_ID, COLUMN_NAME, meal.getName()));
+            sqlExecutor.execute((SQLStatements.getInsertIntoStatement(TABLE_INGREDIENTS, List.of(COLUMN_NAME), List.of(ingredient))));
+            ingredientID = sqlExecutor.execute(SQLStatements
+                    .getSelectColumnFromTableWhereColumnEqualsValue(TABLE_INGREDIENTS, COLUMN_INGREDIENT_ID, COLUMN_NAME, ingredient));
             ingredient_IDs.add(ingredientID);
         }
 
@@ -95,8 +94,7 @@ public class MealMenu extends Menu implements IMenu {
         showMeals();
         System.out.print("Enter id of the meal you want to edit: ");
         String mealIDToCompare = getScanner().nextLine();
-        String mealID = sqlExecutor.execute(
-                CRUDStatements.getSelectAllColumnsFromTableWhereColumnEqualsValueStatement(TABLE_MEALS, COLUMN_MEAL_ID, mealIDToCompare));
+        String mealID = sqlExecutor.execute(SQLStatements.getSelectAllColumnsFromTableWhereColumnEqualsValueStatement(TABLE_MEALS, COLUMN_MEAL_ID, mealIDToCompare));
         mealID = mealID.substring(0, mealIDToCompare.length());
         if (!mealID.isBlank() && mealID.equals(mealIDToCompare)) {
             boolean condition = true;
@@ -113,16 +111,8 @@ public class MealMenu extends Menu implements IMenu {
                     case "2" -> enterCategory();
                     case "3" -> enterIngredients();
                     case "4" -> {
+                        saveEdit(mealIDToCompare, mealID);
                         condition = false;
-                        executeUpdateOfMeal(TABLE_MEALS, COLUMN_NAME, meal.getName(), COLUMN_MEAL_ID, mealIDToCompare);
-                        executeUpdateOfMeal(TABLE_MEALS, COLUMN_CATEGORY, meal.getType().getName(), COLUMN_MEAL_ID, mealIDToCompare);
-                        for (String ingredient : meal.getIngredients()) {
-                            String statement =
-                                    CRUDStatements.getSelectColumnFromTableWhereColumnEqualsValue(TABLE_MEALS, "*", COLUMN_NAME, ingredient);
-                            System.out.println(sqlExecutor.execute(CRUDStatements.getSelectExistsSelectStatement(statement)));
-                            executeUpdateOfMeal("meal_to_ingredient_relation", COLUMN_INGREDIENT_ID, COLUMN_INGREDIENT_ID, ingredient, mealID);
-                        }
-                        System.out.println("Saved edit");
                     }
                     default -> System.out.println("Invalid option");
                 }
@@ -130,18 +120,32 @@ public class MealMenu extends Menu implements IMenu {
         }
     }
 
+    private void saveEdit(String mealIDToCompare, String mealID) {
+        if (!meal.getName().isBlank()) executeUpdateOfMeal(TABLE_MEALS, COLUMN_NAME, meal.getName(), COLUMN_MEAL_ID, mealIDToCompare);
+        if (!meal.getCategory().equals(MealType.UNCATEGORIZED)) {
+            executeUpdateOfMeal(TABLE_MEALS, COLUMN_CATEGORY, meal.getCategory().getName(), COLUMN_MEAL_ID, mealIDToCompare);
+        }
+        for (String ingredient : meal.getIngredients()) {
+            String statement = SQLStatements.getSelectColumnFromTableWhereColumnEqualsValue(TABLE_INGREDIENTS, SQLConstants.ALL, COLUMN_NAME, ingredient);
+            System.out.println(sqlExecutor.execute(SQLStatements.getSelectExistsSelectStatement(statement)));
+            executeUpdateOfMeal(TABLE_MEAL_TO_INGREDIENT, COLUMN_MEAL_ID, mealID,COLUMN_INGREDIENT_ID, ingredient );
+        }
+        System.out.println("Saved edit");
+    }
+
     private void executeUpdateOfMeal(String table, String column1, String value, String column2, String mealID) {
-        System.out.println(sqlExecutor.execute(CRUDStatements.getUpdateTableSetColumn1ToValueWhereColumn2EqualsValue(table, column1, value, column2, mealID)));
+        System.out.println(
+                sqlExecutor.execute(SQLStatements.getUpdateTableSetColumn1ToValueWhereColumn2EqualsValueStatement(table, column1, value, column2, mealID)));
     }
 
     private void deleteMeal() {
         showMeals();
         System.out.print("Enter id of the meal you want to delete: ");
         String mealId = getScanner().nextLine();
-        String meal = sqlExecutor.execute(CRUDStatements.getSelectAllColumnsFromTableWhereColumnEqualsValueStatement(TABLE_MEALS, "meal_id", mealId));
+        String meal = sqlExecutor.execute(SQLStatements.getSelectAllColumnsFromTableWhereColumnEqualsValueStatement(TABLE_MEALS, "meal_id", mealId));
         meal = meal.substring(0, mealId.length());
         if (!meal.isBlank() && meal.equals(mealId)) {
-            sqlExecutor.execute(CRUDStatements.getDeleteFromTableWhereColumnEqualsValue(TABLE_MEALS, "id", meal));
+            sqlExecutor.execute(SQLStatements.getDeleteFromTableWhereColumnEqualsValue(TABLE_MEALS, "id", meal));
             System.out.println("Meal with id = \"" + meal + "\" deleted");
         } else System.out.println("meal with id = \"" + meal + "\" doesn't exist");
     }
