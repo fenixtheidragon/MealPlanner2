@@ -126,6 +126,7 @@ public class MealMenu extends Menu implements IMenu {
         if (!meal.getCategory().equals(MealType.UNCATEGORIZED)) {
             executeUpdateOfMealsTable(COLUMN_CATEGORY, meal.getCategory().getName(), mealID);
         }
+        sqlExecutor.execute(SQLStatements.getDeleteFromTableWhereColumnEqualsValue(TABLE_MEAL_TO_INGREDIENT, COLUMN_MEAL_ID, mealID));
         for (String ingredient : meal.getIngredients()) {
             sqlExecutor.execute(SQLStatements.getInsertIntoStatement(TABLE_INGREDIENTS, List.of(COLUMN_NAME), List.of(ingredient)));
             String ingredientID = sqlExecutor.execute(
