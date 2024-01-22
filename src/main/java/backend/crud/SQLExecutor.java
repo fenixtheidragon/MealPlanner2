@@ -30,9 +30,10 @@ public class SQLExecutor {
     public String execute(String sql) {
         this.sql = sql;
         String result = connectAndQuery();
-        if (result.matches("\\d+")) {
-            return result + " rows were changed.";
-        } else if (result.contains("duplicate key value violates unique constraint")) {
+//        if (result.matches("\\d+")) {
+//            return result + " rows were changed.";
+//        } else
+       if (result.contains("duplicate key value violates unique constraint")) {
             return "duplicate key value";
         } else {
             return result;
@@ -72,7 +73,8 @@ public class SQLExecutor {
             this.resultSet = resultSet;
             return getQuerySelectResult();
         } catch (SQLException e) {
-            return ExceptionLogger.getExceptionStackAsString(e, "querySelect exception:");
+            ExceptionLogger.getExceptionStackAsString(e, "querySelect exception:");
+            return null;
         }
     }
 
@@ -88,8 +90,8 @@ public class SQLExecutor {
                     for (int a = 1; a <= 3; a++) tempResult.add(resultSet.getString(a));
                 }
             } else if (sql.contains(TABLE_INGREDIENTS)) {
-                ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_INGREDIENT_ID, 1);
-                ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_NAME, 2);
+                //ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_INGREDIENT_ID, 0);
+                ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_NAME, 1);
             } else if (sql.contains(TABLE_MEAL_TO_INGREDIENT)) {
                 ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_MEAL_ID, 2);
                 ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_INGREDIENT_ID, 3);

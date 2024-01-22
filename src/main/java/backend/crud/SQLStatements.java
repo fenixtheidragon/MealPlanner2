@@ -24,10 +24,10 @@ public class SQLStatements {
         return sj.toString();
     }
 
-    public static String getSelectColumnFromTableWhereColumnEqualsValue(String table, String column1, String column2, String value) {
-                String statement = getSelectColumnFromTableStatement(table, column1);
+    public static String getSelectColumnFromTableWhereColumnEqualsValueStatement(String table, String column1, String column2, String value) {
+        String statement = getSelectColumnFromTableStatement(table, column1);
         clearStringJoiner();
-        sj.add(statement.substring(0, statement.length() - 2)).add(WHERE).add(column2).add(EQUALS).add(APSTRPH+value+APSTRPH).add(SEMICOL);
+        sj.add(statement.substring(0, statement.length() - 2)).add(WHERE).add(column2).add(EQUALS).add(APSTRPH + value + APSTRPH).add(SEMICOL);
         return sj.toString();
     }
 
@@ -57,11 +57,10 @@ public class SQLStatements {
         return sb.toString();
     }
 
-    public static String getUpdateTableSetColumn1ToValueWhereColumn2EqualsValueStatement(String table, String column1, String value1, String column2,
-            String value2) {
+    public static String getUpdateTableSetColumn1ToValueWhereColumn2EqualsValueStatement(String table, String column1, String value1, String column2, String value2) {
         sj = new StringJoiner(" ");
-        sj.add(UPDATE).add(table).add(SET).add(column1).add(EQUALS).add(APSTRPH+value1+APSTRPH);
-        sj.add(WHERE).add(column2).add(EQUALS).add(APSTRPH+value2+APSTRPH).add(SEMICOL);
+        sj.add(UPDATE).add(table).add(SET).add(column1).add(EQUALS).add(APSTRPH + value1 + APSTRPH);
+        sj.add(WHERE).add(column2).add(EQUALS).add(APSTRPH + value2 + APSTRPH).add(SEMICOL);
         return sj.toString();
     }
 
