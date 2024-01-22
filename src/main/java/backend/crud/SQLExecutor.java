@@ -93,8 +93,8 @@ public class SQLExecutor {
                 //ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_INGREDIENT_ID, 0);
                 ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_NAME, 1);
             } else if (sql.contains(TABLE_MEAL_TO_INGREDIENT)) {
-                ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_MEAL_ID, 2);
-                ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_INGREDIENT_ID, 3);
+                ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_MEAL_ID, 1);
+                ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_INGREDIENT_ID, 2);
             }
             result.add(tempResult.toString());
         }
