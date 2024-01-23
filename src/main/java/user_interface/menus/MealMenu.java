@@ -6,9 +6,8 @@ import backend.crud.*;
 
 import static backend.crud.DataBaseNameConstants.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class MealMenu extends Menu implements IMenu {
 
@@ -42,7 +41,35 @@ public class MealMenu extends Menu implements IMenu {
     }
 
     private void showMeals() {
-        System.out.println(sqlExecutor.execute(SQLStatements.getSelectAllColumnsFromTableStatement(TABLE_MEALS)));
+
+        String mealsAsString = sqlExecutor.execute(SQLStatements.getSelectAllColumnsFromTableStatement(TABLE_MEALS));
+        ArrayList<String> mealsAL = Arrays.stream(mealsAsString.split(" ")).collect(Collectors.toCollection(ArrayList::new));
+        ArrayList<ArrayList<String>> ingredientsForEachMealOrdered = new ArrayList<>();
+        String mealIDsAsString = sqlExecutor.execute(SQLStatements.getSelectColumnFromTableStatement(TABLE_MEALS, COLUMN_MEAL_ID));
+        String[] mealsArray = mealIDsAsString.split(" ");
+        ArrayList<String> mealIDs = Arrays.stream(mealsArray).collect(Collectors.toCollection(ArrayList::new));
+        mealIDs.forEach(mealID -> {
+            String ingredientIDsAsString = sqlExecutor.execute(
+                    SQLStatements.getSelectColumnFromTableWhereColumnEqualsValueStatement(TABLE_MEAL_TO_INGREDIENT, COLUMN_INGREDIENT_ID, COLUMN_MEAL_ID, mealID));
+            ArrayList<String> ingredientIDs = Arrays.stream(ingredientIDsAsString.split(" ")).collect(Collectors.toCollection(ArrayList::new));
+            ingredientIDs.forEach(ingredientID -> {
+                String ingredientsAsString = sqlExecutor.execute(SQLStatements.getSelectColumnFromTableWhereColumnEqualsValueStatement(
+                                        TABLE_INGREDIENTS, COLUMN_INGREDIENT_NAME, COLUMN_INGREDIENT_ID, ingredientID));
+                ArrayList<String> ingredientsAL = Arrays.stream(ingredientsAsString.split(" ")).collect(Collectors.toCollection(ArrayList::new));
+                ingredientsForEachMealOrdered.add(ingredientsAL);
+            });
+        });
+        StringJoiner mealDescription = new StringJoiner (System.lineSeparator());
+        for (int mealIndex = 0; mealIndex < mealsAL.size(); mealIndex++) {
+            StringJoiner sj = new StringJoiner(", ");
+            for (String ingredient: ingredientsForEachMealOrdered.get(mealIndex)) {
+                sj.add(ingredient);
+            }
+            mealDescription.add(mealsAL.get(mealIndex) + "|" + sj.toString());
+        }
+
+        //if (meals.isBlank()) meals = "No meals yet";
+        System.out.println(mealDescription.toString());
     }
 
     private void enterName() {
@@ -71,20 +98,22 @@ public class MealMenu extends Menu implements IMenu {
         meal = new Meal();
         enterName();
         enterCategory();
-        sqlExecutor.execute(SQLStatements.getInsertIntoStatement(TABLE_MEALS, List.of(COLUMN_NAME, COLUMN_CATEGORY),
+        sqlExecutor.execute(SQLStatements.getInsertIntoStatement(TABLE_MEALS, List.of(COLUMN_MEAL_NAME, COLUMN_CATEGORY),
                 List.of(meal.getName(), meal.getCategory().getName())));
         String meal_ID =
-                sqlExecutor.execute(SQLStatements.getSelectColumnFromTableWhereColumnEqualsValueStatement(TABLE_MEALS, COLUMN_MEAL_ID, COLUMN_NAME, meal.getName()));
-        sqlExecutor.execute(SQLStatements.getInsertIntoStatement(TABLE_MEAL_TO_INGREDIENT, List.of(COLUMN_MEAL_ID), List.of(meal_ID)));
+                sqlExecutor.execute(
+                        SQLStatements.getSelectColumnFromTableWhereColumnEqualsValueStatement(TABLE_MEALS, COLUMN_MEAL_ID, COLUMN_MEAL_NAME, meal.getName()));
         //
         enterIngredients();
         List<String> ingredient_IDs = new ArrayList<>();
         String ingredientID;
         for (String ingredient : meal.getIngredients()) {
-            sqlExecutor.execute((SQLStatements.getInsertIntoStatement(TABLE_INGREDIENTS, List.of(COLUMN_NAME), List.of(ingredient))));
+            sqlExecutor.execute((SQLStatements.getInsertIntoStatement(TABLE_INGREDIENTS, List.of(COLUMN_INGREDIENT_NAME), List.of(ingredient))));
             ingredientID = sqlExecutor.execute(SQLStatements
-                    .getSelectColumnFromTableWhereColumnEqualsValueStatement(TABLE_INGREDIENTS, COLUMN_INGREDIENT_ID, COLUMN_NAME, ingredient));
+                    .getSelectColumnFromTableWhereColumnEqualsValueStatement(TABLE_INGREDIENTS, COLUMN_INGREDIENT_ID, COLUMN_INGREDIENT_NAME, ingredient));
             ingredient_IDs.add(ingredientID);
+            sqlExecutor.execute(
+                    SQLStatements.getInsertIntoStatement(TABLE_MEAL_TO_INGREDIENT, List.of(COLUMN_MEAL_ID, COLUMN_INGREDIENT_ID), List.of(meal_ID, ingredientID)));
         }
 
 
@@ -122,15 +151,15 @@ public class MealMenu extends Menu implements IMenu {
     }
 
     private void saveEdit(String mealID) {
-        if (!meal.getName().isBlank()) executeUpdateOfMealsTable(COLUMN_NAME, meal.getName(), mealID);
+        if (!meal.getName().isBlank()) executeUpdateOfMealsTable(COLUMN_MEAL_NAME, meal.getName(), mealID);
         if (!meal.getCategory().equals(MealType.UNCATEGORIZED)) {
             executeUpdateOfMealsTable(COLUMN_CATEGORY, meal.getCategory().getName(), mealID);
         }
         sqlExecutor.execute(SQLStatements.getDeleteFromTableWhereColumnEqualsValue(TABLE_MEAL_TO_INGREDIENT, COLUMN_MEAL_ID, mealID));
         for (String ingredient : meal.getIngredients()) {
-            sqlExecutor.execute(SQLStatements.getInsertIntoStatement(TABLE_INGREDIENTS, List.of(COLUMN_NAME), List.of(ingredient)));
+            sqlExecutor.execute(SQLStatements.getInsertIntoStatement(TABLE_INGREDIENTS, List.of(COLUMN_INGREDIENT_NAME), List.of(ingredient)));
             String ingredientID = sqlExecutor.execute(
-                    SQLStatements.getSelectColumnFromTableWhereColumnEqualsValueStatement(TABLE_INGREDIENTS, COLUMN_INGREDIENT_ID, COLUMN_NAME, ingredient));
+                    SQLStatements.getSelectColumnFromTableWhereColumnEqualsValueStatement(TABLE_INGREDIENTS, COLUMN_INGREDIENT_ID, COLUMN_INGREDIENT_NAME, ingredient));
             sqlExecutor.execute(
                     SQLStatements.getInsertIntoStatement(TABLE_MEAL_TO_INGREDIENT, List.of(COLUMN_MEAL_ID, COLUMN_INGREDIENT_ID), List.of(mealID, ingredientID)));
         }

@@ -30,10 +30,7 @@ public class SQLExecutor {
     public String execute(String sql) {
         this.sql = sql;
         String result = connectAndQuery();
-//        if (result.matches("\\d+")) {
-//            return result + " rows were changed.";
-//        } else
-       if (result.contains("duplicate key value violates unique constraint")) {
+        if (result.contains("duplicate key value violates unique constraint")) {
             return "duplicate key value";
         } else {
             return result;
@@ -83,26 +80,26 @@ public class SQLExecutor {
         while (resultSet.next()) {
             tempResult = new StringJoiner("|");
             if (sql.contains(TABLE_MEALS)) {
-                ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_MEAL_ID, 1);
-                ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_NAME, 2);
-                ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_CATEGORY, 3);
+                ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_MEAL_ID);
+                ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_MEAL_NAME);
+                ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_CATEGORY);
                 if (sql.contains("*")) {
                     for (int a = 1; a <= 3; a++) tempResult.add(resultSet.getString(a));
                 }
             } else if (sql.contains(TABLE_INGREDIENTS)) {
                 //ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_INGREDIENT_ID, 0);
-                ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_NAME, 1);
+                ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_INGREDIENT_NAME);
             } else if (sql.contains(TABLE_MEAL_TO_INGREDIENT)) {
-                ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_MEAL_ID, 1);
-                ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_INGREDIENT_ID, 2);
+                ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_MEAL_ID);
+                ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_INGREDIENT_ID);
             }
             result.add(tempResult.toString());
         }
         return result.toString();
     }
 
-    private void ifQueryContainsColumnAddToStringJoinerFromResultSet(String columnName, int columnIndex) throws SQLException {
-        if (sql.contains(columnName)) tempResult.add(resultSet.getString(columnIndex));
+    private void ifQueryContainsColumnAddToStringJoinerFromResultSet(String columnName) throws SQLException {
+        if (sql.contains(columnName)) tempResult.add(resultSet.getString(columnName));
     }
 
     //for INSERT, DELETE, UPDATE or CREATE, DROP
