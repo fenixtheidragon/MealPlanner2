@@ -38,10 +38,7 @@ public class SQLStatements {
     public static String getSelectAllColumnsFromTableWhereColumnEqualsValueStatement(String table, String column, String value) {
         String selectAll = getSelectAllColumnsFromTableStatement(table);
         clearStringJoiner();
-        System.out.println(selectAll);
-        System.out.println(sj);
         sj.add(selectAll.substring(0, selectAll.length() - 2)).add(WHERE).add(column).add(EQUALS).add(value).add(SEMICOL);
-        System.out.println(sj);
         return sj.toString();
     }
 
@@ -53,7 +50,6 @@ public class SQLStatements {
         sb.append(") values (");
         values.forEach(v -> sb.append("'").append(v).append("',"));
         sb.replace(sb.length() - 1, sb.length(), ");");
-        System.out.println(sb);
         return sb.toString();
     }
 

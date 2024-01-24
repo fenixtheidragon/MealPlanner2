@@ -24,6 +24,7 @@ public class Menu implements IMenu{
     }
 
     public MenuOption printMenuScanAndReturnOption() {
+        System.out.println();
         System.out.println(this);
         String input = scanner.nextLine();
         return getMenuOptionBy(input);

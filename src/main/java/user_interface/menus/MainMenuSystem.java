@@ -9,7 +9,7 @@ public class MainMenuSystem {
     private final MealMenu mealMenu;
     //private final WeeklyPlanMenu weeklyPlanMenu;
     //private final IngredientsMenu ingredientsMenu;
-    private Scanner scanner;
+    private final Scanner scanner;
     private MenuOption option;
     private MenuFactory menuFactory;
     private boolean isAlive;

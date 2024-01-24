@@ -46,7 +46,7 @@ public class SQLExecutor {
                 }
             } else return "Connection is invalid.";
         } catch (SQLException e) {
-            return ExceptionLogger.getExceptionStackAsString(e, "Connection/statement/query exception:");
+            return ExceptionLogger.logAsError(e, "Connection/statement/query exception:");
         }
     }
 
@@ -70,7 +70,7 @@ public class SQLExecutor {
             this.resultSet = resultSet;
             return getQuerySelectResult();
         } catch (SQLException e) {
-            ExceptionLogger.getExceptionStackAsString(e, "querySelect exception:");
+            ExceptionLogger.logAsError(e, "querySelect exception:");
             return null;
         }
     }
@@ -87,7 +87,7 @@ public class SQLExecutor {
                     for (int a = 1; a <= 3; a++) tempResult.add(resultSet.getString(a));
                 }
             } else if (sql.contains(TABLE_INGREDIENTS)) {
-                //ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_INGREDIENT_ID, 0);
+                ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_INGREDIENT_ID);
                 ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_INGREDIENT_NAME);
             } else if (sql.contains(TABLE_MEAL_TO_INGREDIENT)) {
                 ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_MEAL_ID);
@@ -98,8 +98,12 @@ public class SQLExecutor {
         return result.toString();
     }
 
-    private void ifQueryContainsColumnAddToStringJoinerFromResultSet(String columnName) throws SQLException {
-        if (sql.contains(columnName)) tempResult.add(resultSet.getString(columnName));
+    private void ifQueryContainsColumnAddToStringJoinerFromResultSet(String columnName){
+        try {
+            if (sql.contains(columnName)) tempResult.add(resultSet.getString(columnName));
+        } catch (SQLException e) {
+            ExceptionLogger.logAsDebug(e,"probably resultSet doesn't have right column");
+        }
     }
 
     //for INSERT, DELETE, UPDATE or CREATE, DROP

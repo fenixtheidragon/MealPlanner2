@@ -6,7 +6,7 @@ import java.util.StringJoiner;
 @Slf4j
 public class ExceptionLogger {
 
-    public static String getExceptionStackAsString(Exception exception, String exceptionDescription) {
+    public static String logAsError(Exception exception, String exceptionDescription) {
         StringJoiner sj = new StringJoiner(System.lineSeparator());
         sj.add(exceptionDescription);
         sj.add(exception.toString());
@@ -14,6 +14,17 @@ public class ExceptionLogger {
             sj.add(s.toString());
         }
         log.error(sj.toString());
+        return "Exception occurred";
+    }
+
+    public static String logAsDebug(Exception exception, String exceptionDescription) {
+        StringJoiner sj = new StringJoiner(System.lineSeparator());
+        sj.add(exceptionDescription);
+        sj.add(exception.toString());
+        for (StackTraceElement s : exception.getStackTrace()) {
+            sj.add(s.toString());
+        }
+        log.debug(sj.toString());
         return "Exception occurred";
     }
 }
