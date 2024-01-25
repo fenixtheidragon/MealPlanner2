@@ -89,6 +89,10 @@ public class SQLExecutor {
             } else if (sql.contains(TABLE_INGREDIENTS)) {
                 ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_INGREDIENT_ID);
                 ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_INGREDIENT_NAME);
+                ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_AMOUNT_GRAMS);
+                if (sql.contains("*")) {
+                    for (int a = 1; a <= 3; a++) tempResult.add(resultSet.getString(a));
+                }
             } else if (sql.contains(TABLE_MEAL_TO_INGREDIENT)) {
                 ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_MEAL_ID);
                 ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_INGREDIENT_ID);

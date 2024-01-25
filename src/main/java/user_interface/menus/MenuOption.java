@@ -27,8 +27,9 @@ public enum MenuOption {
     CLEAR_DAY("Clear day"),
     CLEAR_WEEK("Clear week"),
     //ingredients menu options(+return to previous menu):
-    SHOW_INGREDIENTS("Show weekly plan"),
+    SHOW_INGREDIENTS("Show ingredients"),
     ADD_INGREDIENTS("Add ingredients"),
+    EDIT_INGREDIENTS("Edit ingredients"),
     DELETE_INGREDIENTS("Delete ingredients");
 
     private final String name;
