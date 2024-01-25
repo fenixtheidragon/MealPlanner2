@@ -81,28 +81,6 @@ public class MealMenu extends Menu implements IMenu {
 		else System.out.println(mealDescription);
 	}
 
-	private void enterName() {
-		System.out.print("Enter meal's name: ");
-		String name = getScanner().nextLine();
-		meal.setName(name);
-	}
-
-	private void enterCategory() {
-		String type;
-		System.out.println(MealType.getDescription());
-		System.out.print("Enter meal's category or make it \"uncategorized\" by pressing enter: ");
-		type = getScanner().nextLine();
-		meal.setCategory(type);
-	}
-
-	private void enterIngredients() {
-		String ingredients = "";
-		while (!meal.setIngredients(ingredients)) {
-			System.out.print("Enter meal's ingredients in csv format: ");
-			ingredients = getScanner().nextLine();
-		}
-	}
-
 	private void addMeal() {
 		meal = new Meal();
 		enterName();
@@ -124,6 +102,25 @@ public class MealMenu extends Menu implements IMenu {
 		}
 	}
 
+	private void enterName() {
+		System.out.print("Enter meal's name: ");
+		meal.setName(getScanner().nextLine());
+	}
+
+	private void enterCategory() {
+		System.out.println(MealType.getDescription());
+		System.out.print("Enter meal's category or make it \"uncategorized\" by pressing enter: ");
+		meal.setCategory(getScanner().nextLine());
+	}
+
+	private void enterIngredients() {
+		String ingredients = "";
+		while (!meal.setIngredients(ingredients)) {
+			System.out.print("Enter meal's ingredients in csv format: ");
+			ingredients = getScanner().nextLine();
+		}
+	}
+
 	private void editMeal() {
 		meal = new Meal();
 		showMeals();
@@ -136,11 +133,11 @@ public class MealMenu extends Menu implements IMenu {
 			boolean condition = true;
 			while (condition) {
 				System.out.println("""
-													 What do you want to edit(enter the number)?
-													  1)name;
-													  2)category;
-													  3)ingredients;
-													  4)save edit""");
+														What do you want to edit(enter the number)?
+															1)name;
+															2)category;
+															3)ingredients;
+															4)save edit""");
 				String input = getScanner().nextLine();
 				switch (input) {
 					case "1" -> enterName();

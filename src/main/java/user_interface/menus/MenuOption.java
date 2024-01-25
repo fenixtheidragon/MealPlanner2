@@ -47,6 +47,6 @@ public enum MenuOption {
     }
 
     public static List<MenuOption> getIngredientsMenuOptions() {
-        return List.of(MAIN_MENU, SHOW_INGREDIENTS, ADD_INGREDIENTS, DELETE_INGREDIENTS);
+        return List.of(MAIN_MENU, SHOW_INGREDIENTS, ADD_INGREDIENTS, EDIT_INGREDIENTS, DELETE_INGREDIENTS);
     }
 }
