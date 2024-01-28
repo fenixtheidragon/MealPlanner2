@@ -62,10 +62,10 @@ public class IngredientsMenu extends Menu implements IMenu {
 			boolean condition = true;
 			while (condition) {
 				System.out.println("""
-													What do you want to edit(enter the number)?
-														1)name;
-														2)amount;
-														3)save edit""");
+													 What do you want to edit(enter the number)?
+													 	1)name;
+													 	2)amount;
+													 	3)save edit""");
 				String input = getScanner().nextLine();
 				switch (input) {
 					case "1" -> enterName();
@@ -96,16 +96,20 @@ public class IngredientsMenu extends Menu implements IMenu {
 	}
 
 	private void saveEdit(String ingredientId) {
-		if (!ingredient.getName().isBlank()) sqlExecutor.execute(SQLStatements.getUpdateTableSetColumn1ToValueWhereColumn2EqualsValueStatement(
-			TABLE_INGREDIENTS, COLUMN_INGREDIENT_NAME, ingredient.getName(), COLUMN_INGREDIENT_ID, ingredientId));
-		if (ingredient.getAmount()!=0) sqlExecutor.execute(SQLStatements.getUpdateTableSetColumn1ToValueWhereColumn2EqualsValueStatement(
-			TABLE_INGREDIENTS, COLUMN_AMOUNT_GRAMS, String.valueOf(ingredient.getAmount()), COLUMN_INGREDIENT_ID, ingredientId));
+		if (!ingredient.getName().isBlank()) sqlExecutor.execute(
+			SQLStatements.getUpdateTableSetColumn1ToValueWhereColumn2EqualsValueStatement(TABLE_INGREDIENTS, COLUMN_INGREDIENT_NAME, ingredient.getName(),
+				COLUMN_INGREDIENT_ID, ingredientId));
+		if (ingredient.getAmount() != 0) sqlExecutor.execute(
+			SQLStatements.getUpdateTableSetColumn1ToValueWhereColumn2EqualsValueStatement(TABLE_INGREDIENTS, COLUMN_AMOUNT_GRAMS,
+				String.valueOf(ingredient.getAmount()), COLUMN_INGREDIENT_ID, ingredientId));
 	}
 
 	private void deleteIngredients() {
 		showIngredients();
 		System.out.print("Enter id of ingredient you want to delete: ");
 		String ingredientID = getScanner().nextLine();
-		sqlExecutor.execute(SQLStatements.getDeleteFromTableWhereColumnEqualsValue(TABLE_INGREDIENTS,COLUMN_INGREDIENT_ID,ingredientID));
+		if (sqlExecutor.execute(SQLStatements.getDeleteFromTableWhereColumnEqualsValue(TABLE_INGREDIENTS, COLUMN_INGREDIENT_ID, ingredientID))
+									 .matches(("\\d+"))) System.out.println("Ingredient with id = " + ingredientID + " was deleted");
+		else System.out.println("Ingredient is in the recipe, so can not be deleted");
 	}
 }

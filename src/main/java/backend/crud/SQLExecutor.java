@@ -96,6 +96,13 @@ public class SQLExecutor {
             } else if (sql.contains(TABLE_MEAL_TO_INGREDIENT)) {
                 ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_MEAL_ID);
                 ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_INGREDIENT_ID);
+            } else if (sql.contains(TABLE_WEEKLY_PLAN)) {
+                ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_WEEKLY_PLAN_ID);
+                ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_DAY);
+                ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_MEAL_ID);
+                if (sql.contains("*")) {
+                    for (int a = 1; a <= 3; a++) tempResult.add(resultSet.getString(a));
+                }
             }
             result.add(tempResult.toString());
         }

@@ -38,7 +38,7 @@ public class SQLStatements {
     public static String getSelectAllColumnsFromTableWhereColumnEqualsValueStatement(String table, String column, String value) {
         String selectAll = getSelectAllColumnsFromTableStatement(table);
         clearStringJoiner();
-        sj.add(selectAll.substring(0, selectAll.length() - 2)).add(WHERE).add(column).add(EQUALS).add(value).add(SEMICOL);
+        sj.add(selectAll.substring(0, selectAll.length() - 2)).add(WHERE).add(column).add(EQUALS).add(APSTRPH + value + APSTRPH).add(SEMICOL);
         return sj.toString();
     }
 

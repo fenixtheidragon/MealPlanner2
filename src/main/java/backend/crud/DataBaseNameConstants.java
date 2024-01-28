@@ -18,5 +18,6 @@ public class DataBaseNameConstants {
     public final static String TABLE_M_TO_I_COLUMN_ID = "meal_to_ingredient_id";
     //
     public final static String TABLE_WEEKLY_PLAN = "weekly_plan";
+    public final static String COLUMN_WEEKLY_PLAN_ID = "weekly_plan_id";
     public final static String COLUMN_DAY = "day";
 }

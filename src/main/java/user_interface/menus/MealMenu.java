@@ -43,7 +43,7 @@ public class MealMenu extends Menu implements IMenu {
 		return al.stream().filter(a -> !a.isBlank()).collect(Collectors.toCollection(ArrayList::new));
 	}
 
-	private void showMeals() {
+	public void showMeals() {
 		String mealsAsString = sqlExecutor.execute(SQLStatements.getSelectAllColumnsFromTableStatement(TABLE_MEALS));
 		ArrayList<String> mealsAL = getArrayListFrom(mealsAsString);
 		ArrayList<ArrayList<String>> ingredientsForEachMealOrdered = new ArrayList<>();
