@@ -62,7 +62,13 @@ public class SQLStatements {
 
     public static String getDeleteFromTableWhereColumnEqualsValue(String table, String column, String value) {
         clearStringJoiner();
-        sj.add(DELETE).add(FROM).add(table).add(WHERE).add(column).add(EQUALS).add(value).add(SEMICOL);
+        sj.add(DELETE).add(FROM).add(table).add(WHERE).add(column).add(EQUALS).add(APSTRPH + value + APSTRPH).add(SEMICOL);
+        return sj.toString();
+    }
+
+    public static String getDeleteFromTableAll(String table) {
+        clearStringJoiner();
+        sj.add(DELETE).add(FROM).add(table).add(SEMICOL);
         return sj.toString();
     }
 }

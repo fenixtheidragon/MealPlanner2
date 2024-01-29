@@ -24,6 +24,7 @@ public enum MenuOption {
     SHOW_WEEKLY_PLAN("Show weekly plan"),
     EDIT_DAY("Edit day"),
     COPY_DAY("Copy day"),
+    CLEAR_DAY("clear day"),
     CLEAR_WEEK("Clear week"),
     //ingredients menu options(+return to previous menu):
     SHOW_INGREDIENTS("Show ingredients"),
@@ -42,7 +43,7 @@ public enum MenuOption {
     }
 
     public static List<MenuOption> getWeeklyPlanMenuOptions() {
-        return List.of(MAIN_MENU, SHOW_WEEKLY_PLAN, EDIT_DAY, COPY_DAY, CLEAR_WEEK);
+        return List.of(MAIN_MENU, SHOW_WEEKLY_PLAN, EDIT_DAY, COPY_DAY, CLEAR_DAY, CLEAR_WEEK);
     }
 
     public static List<MenuOption> getIngredientsMenuOptions() {

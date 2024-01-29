@@ -97,11 +97,11 @@ public class SQLExecutor {
                 ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_MEAL_ID);
                 ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_INGREDIENT_ID);
             } else if (sql.contains(TABLE_WEEKLY_PLAN)) {
-                ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_WEEKLY_PLAN_ID);
+                //ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_WEEKLY_PLAN_ID);
                 ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_DAY);
                 ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_MEAL_ID);
                 if (sql.contains("*")) {
-                    for (int a = 1; a <= 3; a++) tempResult.add(resultSet.getString(a));
+                    for (int a = 1; a <= 2; a++) tempResult.add(resultSet.getString(a));
                 }
             }
             result.add(tempResult.toString());
