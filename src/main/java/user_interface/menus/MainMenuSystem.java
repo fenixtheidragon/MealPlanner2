@@ -9,14 +9,9 @@ public class MainMenuSystem {
  private final MealMenu mealMenu;
  private final WeeklyPlanMenu weeklyPlanMenu;
  private final IngredientsMenu ingredientsMenu;
- private final Scanner scanner;
- private MenuOption option;
- private MenuFactory menuFactory;
- private boolean isAlive;
 
  public MainMenuSystem(Scanner scanner) {
-  this.scanner = scanner;
-  this.menuFactory = new MenuFactory(scanner);
+  MenuFactory menuFactory = new MenuFactory(scanner);
   this.mainMenu = menuFactory.getMenu(MAIN_MENU);
   this.mealMenu = new MealMenu(menuFactory.getMenu(MEAL_MENU));
   this.weeklyPlanMenu = new WeeklyPlanMenu(menuFactory.getMenu(WEEKLY_PLAN_MENU));
@@ -24,9 +19,9 @@ public class MainMenuSystem {
  }
 
  public void open() {
-  this.isAlive = true;
+  boolean isAlive = true;
   while (isAlive) {
-   this.option = mainMenu.printMenuScanAndReturnOption();
+   MenuOption option = mainMenu.printMenuScanAndReturnOption();
    switch (option) {
     case MEAL_MENU -> mealMenu.open();
     case WEEKLY_PLAN_MENU -> weeklyPlanMenu.open();

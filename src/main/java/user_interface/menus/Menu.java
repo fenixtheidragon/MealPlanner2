@@ -1,7 +1,6 @@
 package user_interface.menus;
 
 import lombok.Getter;
-
 import java.util.ArrayList;
 import java.util.Scanner;
 
