@@ -7,6 +7,7 @@ import backend.ExceptionLogger;
 import lombok.Getter;
 
 import java.sql.*;
+import java.util.List;
 import java.util.Properties;
 import java.util.StringJoiner;
 
@@ -75,39 +76,29 @@ public class SQLExecutor {
   while (resultSet.next()) {
    tempResult = new StringJoiner("|");
    if (sql.contains(TABLE_MEALS)) {
-    ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_MEAL_ID);
-    ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_MEAL_NAME);
-    ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_CATEGORY);
-    if (sql.contains("*")) {
-     for (int a = 1; a <= 3; a++) tempResult.add(resultSet.getString(a));
-    }
+    ifQueryContainsColumnAddToStringJoinerFromResultSet(List.of(COLUMN_MEAL_ID,COLUMN_MEAL_NAME,COLUMN_CATEGORY));
    } else if (sql.contains(TABLE_INGREDIENTS)) {
-    ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_INGREDIENT_ID);
-    ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_INGREDIENT_NAME);
-    ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_AMOUNT_GRAMS);
-    if (sql.contains("*")) {
-     for (int a = 1; a <= 3; a++) tempResult.add(resultSet.getString(a));
-    }
+    ifQueryContainsColumnAddToStringJoinerFromResultSet(List.of(COLUMN_INGREDIENT_ID,COLUMN_INGREDIENT_NAME,COLUMN_AMOUNT_GRAMS));
    } else if (sql.contains(TABLE_MEAL_TO_INGREDIENT)) {
-    ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_MEAL_ID);
-    ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_INGREDIENT_ID);
+    ifQueryContainsColumnAddToStringJoinerFromResultSet(List.of(COLUMN_MEAL_ID,COLUMN_INGREDIENT_ID));
    } else if (sql.contains(TABLE_WEEKLY_PLAN)) {
-    ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_DAY);
-    ifQueryContainsColumnAddToStringJoinerFromResultSet(COLUMN_MEAL_ID);
-    if (sql.contains("*")) {
-     for (int a = 1; a <= 2; a++) tempResult.add(resultSet.getString(a));
-    }
+    ifQueryContainsColumnAddToStringJoinerFromResultSet(List.of(COLUMN_DAY,COLUMN_MEAL_ID));
    }
    result.add(tempResult.toString());
   }
   return result.toString();
  }
 
- private void ifQueryContainsColumnAddToStringJoinerFromResultSet(String columnName) {
-  try {
-   if (sql.contains(columnName)) tempResult.add(resultSet.getString(columnName));
-  } catch (SQLException e) {
-   ExceptionLogger.logAsDebug(e, "probably resultSet doesn't have right column");
+ private void ifQueryContainsColumnAddToStringJoinerFromResultSet(List<String> columnNames) throws SQLException{
+  columnNames.forEach(columnName->{
+   try {
+    if (sql.contains(columnName)) tempResult.add(resultSet.getString(columnName));
+   } catch (SQLException e) {
+    ExceptionLogger.logAsDebug(e, "probably resultSet doesn't have right column");
+   }
+  });
+  if (sql.contains("*")) {
+   for (int a = 1; a <= columnNames.size(); a++) tempResult.add(resultSet.getString(a));
   }
  }
 

@@ -12,11 +12,11 @@ public class SQLStatements {
         sj = new StringJoiner(SPACE);
     }
 
-    public static String getSelectExistsSelectStatement(String selectStatement) {
+    /*public static String getSelectExistsSelectStatement(String selectStatement) {
         clearStringJoiner();
         sj.add(SELECT).add(EXISTS).add(LEFT_PAR).add(selectStatement.substring(0, selectStatement.length() - 1)).add(RIGHT_PAR).add(SEMICOL);
         return sj.toString();
-    }
+    }*/
 
     public static String getSelectColumnFromTableStatement(String table, String column) {
         clearStringJoiner();

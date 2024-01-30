@@ -76,7 +76,6 @@ public class WeeklyPlanMenu extends Menu implements IMenu {
  private void editDay() {
   String day = getDayName("edit");
   if (day != null) {
-   //day = daysOfWeek.get(Integer.parseInt(day) - 1);
    System.out.println(sqlExecutor.execute(SQLStatements.getSelectAllColumnsFromTableWhereColumnEqualsValueStatement(TABLE_WEEKLY_PLAN, COLUMN_DAY, day)));
    System.out.println("Choose meals for this day (IDs in csv format): ");
    mealMenu.showMeals();
@@ -92,8 +91,6 @@ public class WeeklyPlanMenu extends Menu implements IMenu {
   String dayToCopy = getDayName("copy");
   String dayToPasteTo = getDayName("paste to");
   if (dayToCopy != null && dayToPasteTo != null) {
-   //dayToCopy = daysOfWeek.get(Integer.parseInt(dayToCopy) - 1);
-   //dayToPasteTo = daysOfWeek.get(Integer.parseInt(dayToPasteTo) - 1);
    ArrayList<String> mealIDs = Arrays.stream(sqlExecutor.execute(SQLStatements.getSelectColumnFromTableWhereColumnEqualsValueStatement(
                    TABLE_WEEKLY_PLAN, COLUMN_MEAL_ID, COLUMN_DAY, dayToCopy)).split(System.lineSeparator())).filter(a -> !a.isBlank())
            .collect(Collectors.toCollection(ArrayList::new));
@@ -105,9 +102,8 @@ public class WeeklyPlanMenu extends Menu implements IMenu {
  }
 
  private void clearDay() {
-  String day = showPlanPrintQuestionScanAnswer("clear");
-  if (getDayNameOrNull(day) != null) {
-   //day = daysOfWeek.get(Integer.parseInt(day) - 1);
+  String day = getDayName("clear");
+  if (day != null) {
    sqlExecutor.execute(SQLStatements.getDeleteFromTableWhereColumnEqualsValue(TABLE_WEEKLY_PLAN, COLUMN_DAY, day));
   }
  }
