@@ -3,7 +3,7 @@ package backend.crud;
 import lombok.Getter;
 
 @Getter
-public class DataBaseNameConstants {
+public class DBNames {
     public final static String TABLE_MEALS = "meals";
     public final static String COLUMN_MEAL_ID = "meal_id";
     public final static String COLUMN_MEAL_NAME = "meal_name";

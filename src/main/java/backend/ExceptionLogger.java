@@ -27,4 +27,8 @@ public class ExceptionLogger {
         log.debug(sj.toString());
         return "Exception occurred";
     }
+
+    public static void logAsError2(Exception exception) {
+        log.error(exception.toString(),exception);
+    }
 }

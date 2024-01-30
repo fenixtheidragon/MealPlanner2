@@ -1,6 +1,6 @@
 package backend.crud;
 
-public class SQLConstants {
+public class Constants {
     public final static String SELECT = "SELECT";
     public final static String INSERT = "INSERT";
     public final static String UPDATE = "UPDATE";
@@ -9,7 +9,8 @@ public class SQLConstants {
     public final static String INTO = "INTO";
     public final static String WHERE = "WHERE";
     public final static String SET ="SET";
-    public final static String EXISTS = "EXISTS";
+    //public final static String EXISTS = "EXISTS";
+    public final static String VALUES = "VALUES";
     public final static String SEMICOL = ";";
     public final static String APSTRPH = "'";
     public final static String LEFT_PAR = "(";
