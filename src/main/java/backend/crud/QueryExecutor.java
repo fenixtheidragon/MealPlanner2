@@ -1,7 +1,7 @@
 package backend.crud;
 
 import static backend.crud.DBNames.*;
-import static backend.crud.Constants.*;
+import static backend.crud.ConstantsForStringBuilding.*;
 
 import backend.ExceptionLogger;
 import lombok.Getter;
@@ -76,11 +76,14 @@ public class QueryExecutor {
 		while (resultSet.next()) {
 			tempResult = new StringJoiner("|");
 			if (sql.contains(TABLE_MEALS)) {
-				ifQueryContainsColumnAddToStringJoinerFromResultSet(List.of(COLUMN_MEAL_ID, COLUMN_MEAL_NAME, COLUMN_CATEGORY));
+				ifQueryContainsColumnAddToStringJoinerFromResultSet(
+					List.of(COLUMN_MEAL_ID, COLUMN_MEAL_NAME, COLUMN_CATEGORY));
 			} else if (sql.contains(TABLE_INGREDIENTS)) {
-				ifQueryContainsColumnAddToStringJoinerFromResultSet(List.of(COLUMN_INGREDIENT_ID, COLUMN_INGREDIENT_NAME, COLUMN_AMOUNT_GRAMS));
+				ifQueryContainsColumnAddToStringJoinerFromResultSet(
+					List.of(COLUMN_INGREDIENT_ID, COLUMN_INGREDIENT_NAME, COLUMN_AMOUNT_GRAMS));
 			} else if (sql.contains(TABLE_MEAL_TO_INGREDIENT)) {
-				ifQueryContainsColumnAddToStringJoinerFromResultSet(List.of(COLUMN_MEAL_ID, COLUMN_INGREDIENT_ID));
+				ifQueryContainsColumnAddToStringJoinerFromResultSet(
+					List.of(COLUMN_MEAL_ID, COLUMN_INGREDIENT_ID));
 			} else if (sql.contains(TABLE_WEEKLY_PLAN)) {
 				ifQueryContainsColumnAddToStringJoinerFromResultSet(List.of(COLUMN_DAY, COLUMN_MEAL_ID));
 			}
@@ -88,17 +91,22 @@ public class QueryExecutor {
 		}
 		return result.toString();
 	}
-//Переделать, чтобы не была завязана логика на ошибку
-	private void ifQueryContainsColumnAddToStringJoinerFromResultSet(List<String> columnNames) throws SQLException {
-		columnNames.forEach(columnName -> {
-			try {
-				if (sql.contains(columnName)) tempResult.add(resultSet.getString(columnName));
-			} catch (SQLException e) {
-				ExceptionLogger.logAsError(e, "probably resultSet doesn't have right column");
-			}
-		});
+
+	//Переделать, чтобы не была завязана логика на ошибку
+	private void ifQueryContainsColumnAddToStringJoinerFromResultSet(List<String> columnNames)
+		throws SQLException {
 		if (sql.contains("*")) {
-			for (int a = 1; a <= columnNames.size(); a++) tempResult.add(resultSet.getString(a));
+			for (int a = 1; a <= columnNames.size(); a++) {
+				tempResult.add(resultSet.getString(a));
+			}
+		} else {
+			columnNames.forEach(columnName -> {
+				try {
+					if (sql.contains(columnName)) tempResult.add(resultSet.getString(columnName));
+				} catch (SQLException e) {
+					ExceptionLogger.logAsError(e, "probably resultSet doesn't have right column");
+				}
+			});
 		}
 	}
 

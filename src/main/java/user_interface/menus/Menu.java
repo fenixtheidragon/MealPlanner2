@@ -11,21 +11,21 @@ public class Menu implements IMenu{
     private final Scanner scanner;
 
     public Menu(String name, ArrayList<MenuOption> menuOptions, Scanner scanner) {
-        this.NAME = name;
+        NAME = name;
         this.menuOptions = menuOptions;
         this.scanner = scanner;
     }
 
     public Menu(IMenu menu) {
-        this.NAME = menu.getNAME();
-        this.menuOptions = menu.getMenuOptions();
-        this.scanner = menu.getScanner();
+        NAME = menu.getNAME();
+        menuOptions = menu.getMenuOptions();
+        scanner = menu.getScanner();
     }
 
     public MenuOption printMenuScanAndReturnOption() {
         System.out.println();
         System.out.println(this);
-        String input = scanner.nextLine();
+        var input = scanner.nextLine();
         return getMenuOptionBy(input);
     }
 
@@ -44,7 +44,7 @@ public class Menu implements IMenu{
     public String toString() {
         StringBuilder sb = new StringBuilder(NAME);
         //line format: 1. menuOption;
-        for (int a = 1; a <= menuOptions.size(); a++) {
+        for (var a = 1; a <= menuOptions.size(); a++) {
             sb.append(System.lineSeparator()).append(a).append(". ").append(menuOptions.get(a - 1)).append(";");
         }
         return sb.toString();

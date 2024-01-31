@@ -12,9 +12,8 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class WeeklyPlanMenu extends Menu implements IMenu {
-	private final ArrayList<String> daysOfWeek =
-			new ArrayList<>(
-					List.of("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"));
+	private final List<String> daysOfWeek = new ArrayList<>(
+		List.of("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"));
 	private final QueryExecutorForMealsDB sqlExecutor;
 	private final MealMenu mealMenu;
 
@@ -33,7 +32,7 @@ public class WeeklyPlanMenu extends Menu implements IMenu {
 	public void open() {
 		boolean isOpen = true;
 		while (isOpen) {
-			MenuOption option = printMenuScanAndReturnOption();
+			var option = printMenuScanAndReturnOption();
 			switch (option) {
 				case SHOW_WEEKLY_PLAN -> showWeeklyPlan();
 				case EDIT_DAY -> editDay();
@@ -50,15 +49,16 @@ public class WeeklyPlanMenu extends Menu implements IMenu {
 		daysOfWeek.forEach(day -> {
 			System.out.println(day);
 			ArrayList<String> mealIDs =
-					Arrays.stream(sqlExecutor.execute(SQLStatements.getSelectFieldByValueStatement(
-									TABLE_WEEKLY_PLAN, COLUMN_MEAL_ID, COLUMN_DAY, day)
-									).split(System.lineSeparator()))
-							.collect(Collectors.toCollection(ArrayList::new));
+				Arrays.stream(sqlExecutor.execute(Queries.getSelectFieldByValueStatement(
+						TABLE_WEEKLY_PLAN, COLUMN_MEAL_ID, COLUMN_DAY, day)
+					).split(System.lineSeparator()))
+					.collect(Collectors.toCollection(ArrayList::new));
 			mealIDs.forEach(mealID -> {
 				if (!mealID.isBlank()) System.out.println(
-						sqlExecutor.execute(
-								SQLStatements.getSelectFieldByValueStatement(TABLE_MEALS, COLUMN_MEAL_NAME,
-										COLUMN_MEAL_ID, mealID)));
+					sqlExecutor.execute(
+						Queries.getSelectFieldByValueStatement(TABLE_MEALS, COLUMN_MEAL_NAME,
+							COLUMN_MEAL_ID, mealID
+						)));
 			});
 		});
 	}
@@ -84,17 +84,20 @@ public class WeeklyPlanMenu extends Menu implements IMenu {
 		String day = getDayName("edit");
 		if (day != null) {
 			System.out.println(sqlExecutor.execute(
-					SQLStatements.getSelectRowStatement(TABLE_WEEKLY_PLAN,
-							COLUMN_DAY, day)));
+				Queries.getSelectRowStatement(TABLE_WEEKLY_PLAN,
+					COLUMN_DAY, day
+				)));
 			System.out.println("Choose meals for this day (IDs in csv format): ");
 			mealMenu.showMeals();
 			String meals = getScanner().nextLine();
 			ArrayList<String> mealsAL =
-					Arrays.stream(meals.split(",")).collect(Collectors.toCollection(ArrayList::new));
+				Arrays.stream(meals.split(",")).collect(Collectors.toCollection(ArrayList::new));
 			for (String meal : mealsAL) {
 				sqlExecutor.execute(
-						SQLStatements.getInsertIntoStatement(TABLE_WEEKLY_PLAN, List.of(COLUMN_DAY, COLUMN_MEAL_ID),
-								List.of(day, meal)));
+					Queries.getInsertIntoStatement(TABLE_WEEKLY_PLAN,
+						List.of(COLUMN_DAY, COLUMN_MEAL_ID),
+						List.of(day, meal)
+					));
 			}
 		}
 	}
@@ -104,17 +107,20 @@ public class WeeklyPlanMenu extends Menu implements IMenu {
 		String dayToPasteTo = getDayName("paste to");
 		if (dayToCopy != null && dayToPasteTo != null) {
 			ArrayList<String> mealIDs =
-					Arrays.stream(sqlExecutor.execute(SQLStatements.getSelectFieldByValueStatement(
-									TABLE_WEEKLY_PLAN, COLUMN_MEAL_ID, COLUMN_DAY, dayToCopy)).split(System.lineSeparator()))
-							.filter(a -> !a.isBlank())
-							.collect(Collectors.toCollection(ArrayList::new));
+				Arrays.stream(sqlExecutor.execute(Queries.getSelectFieldByValueStatement(
+						TABLE_WEEKLY_PLAN, COLUMN_MEAL_ID, COLUMN_DAY, dayToCopy)).split(System.lineSeparator()))
+					.filter(a -> !a.isBlank())
+					.collect(Collectors.toCollection(ArrayList::new));
 			sqlExecutor.execute(
-					SQLStatements.getDeleteRowStatement(TABLE_WEEKLY_PLAN, COLUMN_DAY,
-							dayToPasteTo));
+				Queries.getDeleteRowStatement(TABLE_WEEKLY_PLAN, COLUMN_DAY,
+					dayToPasteTo
+				));
 			mealIDs.forEach(
-					mealID -> sqlExecutor.execute(
-							SQLStatements.getInsertIntoStatement(TABLE_WEEKLY_PLAN, List.of(COLUMN_DAY, COLUMN_MEAL_ID),
-									List.of(dayToPasteTo, mealID))));
+				mealID -> sqlExecutor.execute(
+					Queries.getInsertIntoStatement(TABLE_WEEKLY_PLAN,
+						List.of(COLUMN_DAY, COLUMN_MEAL_ID),
+						List.of(dayToPasteTo, mealID)
+					)));
 
 		}
 	}
@@ -123,11 +129,11 @@ public class WeeklyPlanMenu extends Menu implements IMenu {
 		String day = getDayName("clear");
 		if (day != null) {
 			sqlExecutor.execute(
-					SQLStatements.getDeleteRowStatement(TABLE_WEEKLY_PLAN, COLUMN_DAY, day));
+				Queries.getDeleteRowStatement(TABLE_WEEKLY_PLAN, COLUMN_DAY, day));
 		}
 	}
 
 	private void clearWeek() {
-		sqlExecutor.execute(SQLStatements.getClearTableStatement(TABLE_WEEKLY_PLAN));
+		sqlExecutor.execute(Queries.getClearTableStatement(TABLE_WEEKLY_PLAN));
 	}
 }

@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.StringJoiner;
 
 import static backend.crud.DBNames.*;
-import static backend.crud.Constants.*;
+import static backend.crud.ConstantsForStringBuilding.*;
 
 public class SQLPreparedStatements {
  private static StringJoiner spaceJoiner = new StringJoiner(" ");

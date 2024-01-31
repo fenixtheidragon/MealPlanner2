@@ -13,15 +13,15 @@ public class MainMenuSystem {
 	public MainMenuSystem(Scanner scanner) {
 		var menuFactory = new MenuFactory(scanner);
 		mainMenu = menuFactory.getMenu(MAIN_MENU);
-		this.mealMenu = new MealMenu(menuFactory.getMenu(MEAL_MENU));
-		this.weeklyPlanMenu = new WeeklyPlanMenu(menuFactory.getMenu(WEEKLY_PLAN_MENU));
-		this.ingredientsMenu = new IngredientsMenu(menuFactory.getMenu(INGREDIENTS_MENU));
+		mealMenu = new MealMenu(menuFactory.getMenu(MEAL_MENU));
+		weeklyPlanMenu = new WeeklyPlanMenu(menuFactory.getMenu(WEEKLY_PLAN_MENU));
+		ingredientsMenu = new IngredientsMenu(menuFactory.getMenu(INGREDIENTS_MENU));
 	}
 
 	public void open() {
-		boolean isAlive = true;
+		var isAlive = true;
 		while (isAlive) {
-			MenuOption option = mainMenu.printMenuScanAndReturnOption();
+			var option = mainMenu.printMenuScanAndReturnOption();
 			switch (option) {
 				case MEAL_MENU -> mealMenu.open();
 				case WEEKLY_PLAN_MENU -> weeklyPlanMenu.open();
