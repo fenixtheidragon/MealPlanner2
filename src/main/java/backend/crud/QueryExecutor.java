@@ -75,7 +75,9 @@ public class QueryExecutor {
 		StringJoiner result = new StringJoiner(System.lineSeparator());
 		while (resultSet.next()) {
 			tempResult = new StringJoiner("|");
-			if (sql.contains(TABLE_MEALS)) {
+			if (sql.contains(SELECT + SPACE + EXISTS)) {
+				ifQueryContainsColumnAddToStringJoinerFromResultSet(List.of(EXISTS));
+			} else if (sql.contains(TABLE_MEALS)) {
 				ifQueryContainsColumnAddToStringJoinerFromResultSet(
 					List.of(COLUMN_MEAL_ID, COLUMN_MEAL_NAME, COLUMN_CATEGORY));
 			} else if (sql.contains(TABLE_INGREDIENTS)) {
@@ -92,21 +94,19 @@ public class QueryExecutor {
 		return result.toString();
 	}
 
-	//Переделать, чтобы не была завязана логика на ошибку
+	//Переделать, чтобы не была завязана логика на ошибку - вроде сделал
 	private void ifQueryContainsColumnAddToStringJoinerFromResultSet(List<String> columnNames)
 		throws SQLException {
-		if (sql.contains("*")) {
+		if (sql.contains(ALL)) {
 			for (int a = 1; a <= columnNames.size(); a++) {
 				tempResult.add(resultSet.getString(a));
 			}
 		} else {
-			columnNames.forEach(columnName -> {
-				try {
-					if (sql.contains(columnName)) tempResult.add(resultSet.getString(columnName));
-				} catch (SQLException e) {
-					ExceptionLogger.logAsError(e, "probably resultSet doesn't have right column");
+			for (var columnName : columnNames) {
+				if (sql.contains(SELECT + SPACE + columnName)) {
+					tempResult.add(resultSet.getString(columnName));
 				}
-			});
+			}
 		}
 	}
 

@@ -13,7 +13,7 @@ public class MealMenu extends Menu implements IMenu {
 	private final QueryExecutorForMealsDB sqlExecutor;
 	private Meal meal;
 
-	public MealMenu(String name, ArrayList<MenuOption> menuOptions, Scanner scanner) {
+	public MealMenu(String name, List<MenuOption> menuOptions, Scanner scanner) {
 		super(name, menuOptions, scanner);
 		this.sqlExecutor = new QueryExecutorForMealsDB();
 	}
@@ -24,9 +24,9 @@ public class MealMenu extends Menu implements IMenu {
 	}
 
 	public void open() {
-		boolean isOpen = true;
+		var isOpen = true;
 		while (isOpen) {
-			MenuOption option = printMenuScanAndReturnOption();
+			var option = printMenuScanAndReturnOption();
 			switch (option) {
 				case SHOW_MEALS -> showMeals();
 				case ADD_MEAL -> addMeal();
@@ -38,36 +38,40 @@ public class MealMenu extends Menu implements IMenu {
 		}
 	}
 
-	private List<String> convertStringToList(String string) {
-		List<String> al = Arrays.asList(string.split(System.lineSeparator()));
-		return al.stream().filter(a -> !a.isBlank()).collect(Collectors.toCollection(ArrayList::new));
+	private List<String> getAllMeals() {
+		return convertStringToList(sqlExecutor.execute(
+			Queries.getSelectAllColumnsStatement(TABLE_MEALS)));
+	}
+
+	private List<String> getAllMealIDs() {
+		return convertStringToList(sqlExecutor.execute(
+			Queries.getSelectColumnStatement(TABLE_MEALS, COLUMN_MEAL_ID)));
+	}
+
+	private List<String> getAllIngredientIDs(String mealID) {
+		return convertStringToList(sqlExecutor.execute(Queries.getSelectFieldByValueStatement(
+			TABLE_MEAL_TO_INGREDIENT, COLUMN_INGREDIENT_ID, COLUMN_MEAL_ID, mealID)));
 	}
 
 	//building meal descriptions from two tables(meals and ingredients) using third table
 	// (meal_to_ingredient_relations)
 	public void showMeals() {
 		// TODO set map-а
-		List<List<String>> ingredientsForEachMealOrdered = new ArrayList<>();
+		var ingredientsForEachMealOrdered = new ArrayList<List<String>>();
 		//
-		String mealsAsString = sqlExecutor.execute(
-				Queries.getSelectAllColumnsStatement(TABLE_MEALS));
-		List<String> meals = convertStringToList(mealsAsString);
+		var meals = getAllMeals();
 		//
-		String mealIDsAsString = sqlExecutor.execute(
-				Queries.getSelectColumnStatement(TABLE_MEALS, COLUMN_MEAL_ID));
-		List<String> mealIDs = convertStringToList(mealIDsAsString);
+		var mealIDs = getAllMealIDs();
 		//
 		mealIDs.forEach(mealID -> {
-			String ingredientIDsAsString = sqlExecutor.execute(Queries.getSelectFieldByValueStatement(
-					TABLE_MEAL_TO_INGREDIENT, COLUMN_INGREDIENT_ID, COLUMN_MEAL_ID, mealID));
-			List<String> ingredientIDs = convertStringToList(ingredientIDsAsString);
+			var ingredientIDs = getAllIngredientIDs(mealID);
 			//
 			StringJoiner ingredientsAsString = new StringJoiner(System.lineSeparator());
 			ingredientIDs.forEach(ingredientID -> ingredientsAsString.add(
 					sqlExecutor.execute(Queries.getSelectFieldByValueStatement(
 							TABLE_INGREDIENTS, COLUMN_INGREDIENT_NAME, COLUMN_INGREDIENT_ID, ingredientID))));
 
-			List<String> ingredients = convertStringToList(ingredientsAsString.toString());
+			var ingredients = convertStringToList(ingredientsAsString.toString());
 			//
 			ingredientsForEachMealOrdered.add(ingredients);
 		});
@@ -89,8 +93,13 @@ public class MealMenu extends Menu implements IMenu {
 	private void addMeal() {
 		meal = new Meal();
 		enterName();
+		if (mealExists()) {
+			System.out.println("This meal already exists.");
+			return;
+		}
 		enterCategory();
 		enterIngredients();
+
 		sqlExecutor.execute(Queries.getInsertIntoStatement(
 				TABLE_MEALS, List.of(COLUMN_MEAL_NAME, COLUMN_CATEGORY),
 				List.of(meal.getName(), meal.getCategory().getName())));
@@ -206,5 +215,14 @@ public class MealMenu extends Menu implements IMenu {
 			sqlExecutor.execute(Queries.getDeleteRowStatement(TABLE_MEALS, COLUMN_MEAL_ID, mealID));
 			System.out.println("Meal with id = \"" + mealID + "\" deleted");
 		} else System.out.println("meal with id = \"" + mealID + "\" doesn't exist");
+	}
+
+	private boolean mealExists() {
+		return sqlExecutor.execute((Queries.getSelectExistsStatement(Queries.getSelectRowStatement(TABLE_MEALS,COLUMN_MEAL_NAME,meal.getName())))).equals("t");
+	}
+
+	private List<String> convertStringToList(String string) {
+		var al = Arrays.asList(string.split(System.lineSeparator()));
+		return al.stream().filter(a -> !a.isBlank()).collect(Collectors.toList());
 	}
 }

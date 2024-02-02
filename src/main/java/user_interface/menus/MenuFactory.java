@@ -14,10 +14,10 @@ public class MenuFactory {
 		return switch (menu) {
 			case MAIN_MENU ->
      // TODO ArrayList
-					new Menu(MenuOption.MAIN_MENU.getName(), new ArrayList<>(MenuOption.getMainMenuOptions()),
+					new Menu(MenuOption.MAIN_MENU.getName(), MenuOption.getMainMenuOptions(),
 							scanner);
 			case MEAL_MENU ->	new MealMenu(
-     MenuOption.MEAL_MENU.getName(), new ArrayList<>(MenuOption.getMealMenuOptions()),	scanner
+     MenuOption.MEAL_MENU.getName(), MenuOption.getMealMenuOptions(),	scanner
    );
 			case WEEKLY_PLAN_MENU -> new WeeklyPlanMenu(
      MenuOption.WEEKLY_PLAN_MENU.getName(),	new ArrayList<>(MenuOption.getWeeklyPlanMenuOptions()),

@@ -8,7 +8,7 @@ import static backend.crud.ConstantsForStringBuilding.*;
 public class Queries {
 	private static StringJoiner sj;
 
-	public static String getSelectExistsSelectStatement(String selectStatement) {
+	public static String getSelectExistsStatement(String selectStatement) {
 		clearStringJoiner();
 		sj.add(SELECT).add(EXISTS).add(LEFT_PAR)
 			.add(selectStatement.substring(0, selectStatement.length() - 1)).add(RIGHT_PAR).add(SEMICOL);

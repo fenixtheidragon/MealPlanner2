@@ -2,15 +2,16 @@ package user_interface.menus;
 
 import lombok.Getter;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 @Getter
 public class Menu implements IMenu{
     private final String NAME;
-    private final ArrayList<MenuOption> menuOptions;
+    private final List<MenuOption> menuOptions;
     private final Scanner scanner;
 
-    public Menu(String name, ArrayList<MenuOption> menuOptions, Scanner scanner) {
+    public Menu(String name, List<MenuOption> menuOptions, Scanner scanner) {
         NAME = name;
         this.menuOptions = menuOptions;
         this.scanner = scanner;
@@ -42,7 +43,7 @@ public class Menu implements IMenu{
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(NAME);
+        var sb = new StringBuilder(NAME);
         //line format: 1. menuOption;
         for (var a = 1; a <= menuOptions.size(); a++) {
             sb.append(System.lineSeparator()).append(a).append(". ").append(menuOptions.get(a - 1)).append(";");

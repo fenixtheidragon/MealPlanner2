@@ -11,7 +11,7 @@ public class IngredientsMenu extends Menu implements IMenu {
 	private final QueryExecutorForMealsDB sqlExecutor;
 	private Ingredient ingredient;
 
-	public IngredientsMenu(String name, ArrayList<MenuOption> menuOptions, Scanner scanner) {
+	public IngredientsMenu(String name, List<MenuOption> menuOptions, Scanner scanner) {
 		super(name, menuOptions, scanner);
 		this.sqlExecutor = new QueryExecutorForMealsDB();
 	}
@@ -45,7 +45,7 @@ public class IngredientsMenu extends Menu implements IMenu {
 		System.out.print(
 			"Enter ingredients names and amounts in grams (in form: apple:1000,banana:500): ");
 		String namesAndAmounts = getScanner().nextLine();
-		ArrayList<String[]> namesAndAmountsAL = new ArrayList<>();
+		var namesAndAmountsAL = new ArrayList<String[]>();
 		Arrays.stream(namesAndAmounts.split(","))
 			.forEach(nameAndAmount -> namesAndAmountsAL.add(nameAndAmount.split(":")));
 		for (var nameAndAmount : namesAndAmountsAL) {
@@ -66,10 +66,10 @@ public class IngredientsMenu extends Menu implements IMenu {
 			boolean condition = true;
 			while (condition) {
 				System.out.println("""
-													What do you want to edit(enter the number)?
-													 1)name;
-													 2)amount;
-													 3)save edit""");
+				                   What do you want to edit(enter the number)?
+				                    1)name;
+				                    2)amount;
+				                    3)save edit""");
 				String input = getScanner().nextLine();
 				switch (input) {
 					case "1" -> enterName();
@@ -78,6 +78,7 @@ public class IngredientsMenu extends Menu implements IMenu {
 						saveEdit(ingredientID);
 						condition = false;
 					}
+					//todo default
 				}
 			}
 		}
@@ -101,12 +102,16 @@ public class IngredientsMenu extends Menu implements IMenu {
 	}
 
 	private void saveEdit(String ingredientId) {
-		if (!ingredient.getName().isBlank()) sqlExecutor.execute(
-			Queries.getUpdateForFieldStatement(TABLE_INGREDIENTS, COLUMN_INGREDIENT_NAME,
-				ingredient.getName(), COLUMN_INGREDIENT_ID, ingredientId));
-		if (ingredient.getAmount() != 0) sqlExecutor.execute(
-			Queries.getUpdateForFieldStatement(TABLE_INGREDIENTS, COLUMN_AMOUNT_GRAMS,
+		if (!ingredient.getName().isBlank()) {
+			sqlExecutor.execute(
+				Queries.getUpdateForFieldStatement(TABLE_INGREDIENTS, COLUMN_INGREDIENT_NAME,
+					ingredient.getName(), COLUMN_INGREDIENT_ID, ingredientId));
+		}
+		if (ingredient.getAmount() != 0) {
+			sqlExecutor.execute(Queries.getUpdateForFieldStatement(TABLE_INGREDIENTS,
+				COLUMN_AMOUNT_GRAMS,
 				String.valueOf(ingredient.getAmount()), COLUMN_INGREDIENT_ID, ingredientId));
+		}
 	}
 
 	private void deleteIngredients() {
