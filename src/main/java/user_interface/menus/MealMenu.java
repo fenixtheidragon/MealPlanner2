@@ -7,6 +7,7 @@ import backend.Meal;
 import backend.MealType;
 import backend.crud.*;
 
+import static backend.crud.ConstantsForStringBuilding.*;
 import static backend.crud.DBNames.*;
 
 public class MealMenu extends Menu implements IMenu {
@@ -36,58 +37,18 @@ public class MealMenu extends Menu implements IMenu {
 				default -> System.out.println("Invalid meal menu option");
 			}
 		}
-	}
-
-	private List<String> getAllMeals() {
-		return convertStringToList(sqlExecutor.execute(
-			Queries.getSelectAllColumnsStatement(TABLE_MEALS)));
-	}
-
-	private List<String> getAllMealIDs() {
-		return convertStringToList(sqlExecutor.execute(
-			Queries.getSelectColumnStatement(TABLE_MEALS, COLUMN_MEAL_ID)));
-	}
-
-	private List<String> getAllIngredientIDs(String mealID) {
-		return convertStringToList(sqlExecutor.execute(Queries.getSelectFieldByValueStatement(
-			TABLE_MEAL_TO_INGREDIENT, COLUMN_INGREDIENT_ID, COLUMN_MEAL_ID, mealID)));
-	}
-
-	//building meal descriptions from two tables(meals and ingredients) using third table
+	}//building meal descriptions from two tables(meals and ingredients) using third table
 	// (meal_to_ingredient_relations)
 	public void showMeals() {
-		// TODO set map-а
-		var ingredientsForEachMealOrdered = new ArrayList<List<String>>();
-		//
-		var meals = getAllMeals();
-		//
-		var mealIDs = getAllMealIDs();
-		//
-		mealIDs.forEach(mealID -> {
-			var ingredientIDs = getAllIngredientIDs(mealID);
-			//
-			StringJoiner ingredientsAsString = new StringJoiner(System.lineSeparator());
-			ingredientIDs.forEach(ingredientID -> ingredientsAsString.add(
-					sqlExecutor.execute(Queries.getSelectFieldByValueStatement(
-							TABLE_INGREDIENTS, COLUMN_INGREDIENT_NAME, COLUMN_INGREDIENT_ID, ingredientID))));
-
-			var ingredients = convertStringToList(ingredientsAsString.toString());
-			//
-			ingredientsForEachMealOrdered.add(ingredients);
-		});
-		buildAndPrintMealDescription(meals, ingredientsForEachMealOrdered);
+		buildAndPrintMealsTable(getAllMeals(), getEachMealIngredientsList());
 	}
 
-	private void buildAndPrintMealDescription(List<String> meals,
-			List<List<String>> ingredientsForEachMealOrdered) {
-		StringJoiner mealDescription = new StringJoiner(System.lineSeparator());
-		for (int mealIndex = 0; mealIndex < meals.size(); mealIndex++) {
-			StringJoiner sj = new StringJoiner(", ");
-			ingredientsForEachMealOrdered.get(mealIndex).forEach(sj::add);
-			mealDescription.add(meals.get(mealIndex) + "|" + sj);
-		}
-		if (mealDescription.toString().isBlank()) System.out.println("No meals yet");
-		else System.out.println(mealDescription);
+	private void insertNameAndCategory() {
+		sqlExecutor.execute(
+			Queries.getInsertIntoStatement(TABLE_MEALS, List.of(COLUMN_MEAL_NAME, COLUMN_CATEGORY),
+				List.of(meal.getName(), meal.getCategory().getName())
+			)
+		);
 	}
 
 	private void addMeal() {
@@ -99,22 +60,20 @@ public class MealMenu extends Menu implements IMenu {
 		}
 		enterCategory();
 		enterIngredients();
-
-		sqlExecutor.execute(Queries.getInsertIntoStatement(
-				TABLE_MEALS, List.of(COLUMN_MEAL_NAME, COLUMN_CATEGORY),
-				List.of(meal.getName(), meal.getCategory().getName())));
+		insertNameAndCategory();
 		//
-		String meal_ID = sqlExecutor.execute(Queries.getSelectFieldByValueStatement(
-				TABLE_MEALS, COLUMN_MEAL_ID, COLUMN_MEAL_NAME, meal.getName()));
+		String meal_ID = sqlExecutor.execute(
+			Queries.getSelectFieldByValueStatement(TABLE_MEALS, COLUMN_MEAL_ID, COLUMN_MEAL_NAME,
+				meal.getName()));
 		String ingredientID;
 		for (String ingredient : meal.getIngredients()) {
-			sqlExecutor.execute(
-					(Queries.getInsertIntoStatement(TABLE_INGREDIENTS, List.of(COLUMN_INGREDIENT_NAME),
-							List.of(ingredient))));
-			ingredientID = sqlExecutor.execute(Queries.getSelectFieldByValueStatement(
-					TABLE_INGREDIENTS, COLUMN_INGREDIENT_ID, COLUMN_INGREDIENT_NAME, ingredient));
+			sqlExecutor.execute(Queries.getInsertIntoStatement(
+					TABLE_INGREDIENTS, List.of(COLUMN_INGREDIENT_NAME),List.of(ingredient)));
+			ingredientID = sqlExecutor.execute(
+				Queries.getSelectFieldByValueStatement(TABLE_INGREDIENTS, COLUMN_INGREDIENT_ID,
+					COLUMN_INGREDIENT_NAME, ingredient));
 			sqlExecutor.execute(Queries.getInsertIntoStatement(TABLE_MEAL_TO_INGREDIENT,
-					List.of(COLUMN_MEAL_ID, COLUMN_INGREDIENT_ID), List.of(meal_ID, ingredientID)));
+				List.of(COLUMN_MEAL_ID, COLUMN_INGREDIENT_ID), List.of(meal_ID, ingredientID)));
 		}
 	}
 
@@ -130,7 +89,7 @@ public class MealMenu extends Menu implements IMenu {
 	}
 
 	private void enterIngredients() {
-		String ingredients = "";
+		String ingredients = EMPTY;
 		while (!meal.setIngredients(ingredients)) {
 			System.out.print("Enter meal's ingredients in csv format: ");
 			ingredients = getScanner().nextLine();
@@ -142,9 +101,8 @@ public class MealMenu extends Menu implements IMenu {
 		showMeals();
 		System.out.print("Enter id of the meal you want to edit: ");
 		String mealIDToCompare = getScanner().nextLine();
-		String mealID =
-				sqlExecutor.execute(
-						Queries.getSelectRowStatement(TABLE_MEALS, COLUMN_MEAL_ID, mealIDToCompare));
+		String mealID = sqlExecutor.execute(
+			Queries.getSelectRowStatement(TABLE_MEALS, COLUMN_MEAL_ID, mealIDToCompare));
 		mealID = mealID.substring(0, mealIDToCompare.length());
 		if (!mealID.isBlank() && mealID.equals(mealIDToCompare)) {
 			boolean condition = true;
@@ -178,26 +136,24 @@ public class MealMenu extends Menu implements IMenu {
 			executeUpdateOfMealsTable(COLUMN_CATEGORY, meal.getCategory().getName(), mealID);
 
 		sqlExecutor.execute(
-				Queries.getDeleteRowStatement(TABLE_MEAL_TO_INGREDIENT, COLUMN_MEAL_ID, mealID));
+			Queries.getDeleteRowStatement(TABLE_MEAL_TO_INGREDIENT, COLUMN_MEAL_ID, mealID));
 		for (String ingredient : meal.getIngredients()) {
 			sqlExecutor.execute(
-					Queries.getInsertIntoStatement(TABLE_INGREDIENTS, List.of(COLUMN_INGREDIENT_NAME),
-							List.of(ingredient)));
+				Queries.getInsertIntoStatement(TABLE_INGREDIENTS, List.of(COLUMN_INGREDIENT_NAME),
+					List.of(ingredient)));
 			String ingredientID = sqlExecutor.execute(
-					Queries.getSelectFieldByValueStatement(TABLE_INGREDIENTS, COLUMN_INGREDIENT_ID,
-							COLUMN_INGREDIENT_NAME,
-							ingredient));
-			sqlExecutor.execute(
-					Queries.getInsertIntoStatement(TABLE_MEAL_TO_INGREDIENT,
-							List.of(COLUMN_MEAL_ID, COLUMN_INGREDIENT_ID), List.of(mealID, ingredientID)));
+				Queries.getSelectFieldByValueStatement(TABLE_INGREDIENTS, COLUMN_INGREDIENT_ID,
+					COLUMN_INGREDIENT_NAME, ingredient));
+			sqlExecutor.execute(Queries.getInsertIntoStatement(TABLE_MEAL_TO_INGREDIENT,
+				List.of(COLUMN_MEAL_ID, COLUMN_INGREDIENT_ID), List.of(mealID, ingredientID)));
 		}
 		System.out.println("Saved edit");
 	}
 
 	private void executeUpdateOfMealsTable(String column1, String value, String mealID) {
 		System.out.println(sqlExecutor.execute(
-				Queries.getUpdateForFieldStatement(DBNames.TABLE_MEALS, column1, value,
-						DBNames.COLUMN_MEAL_ID, mealID)));
+			Queries.getUpdateForFieldStatement(DBNames.TABLE_MEALS, column1, value,
+				DBNames.COLUMN_MEAL_ID, mealID)));
 	}
 
 	private void deleteMeal() {
@@ -205,24 +161,66 @@ public class MealMenu extends Menu implements IMenu {
 		System.out.print("Enter id of the meal you want to delete: ");
 		String mealID = getScanner().nextLine();
 		String meal =
-				sqlExecutor.execute(Queries.getSelectRowStatement(TABLE_MEALS, "meal_id", mealID));
+			sqlExecutor.execute(Queries.getSelectRowStatement(TABLE_MEALS, "meal_id", mealID));
 		String mealIDToCompare = meal.substring(0, mealID.length());
 		if (!mealIDToCompare.isBlank() && mealIDToCompare.equals(mealID)) {
 			sqlExecutor.execute(
-					Queries.getDeleteRowStatement(TABLE_MEAL_TO_INGREDIENT, COLUMN_MEAL_ID, mealID));
-			sqlExecutor.execute(
-					Queries.getDeleteRowStatement(TABLE_WEEKLY_PLAN, COLUMN_MEAL_ID, mealID));
+				Queries.getDeleteRowStatement(TABLE_MEAL_TO_INGREDIENT, COLUMN_MEAL_ID, mealID));
+			sqlExecutor.execute(Queries.getDeleteRowStatement(TABLE_WEEKLY_PLAN, COLUMN_MEAL_ID,
+				mealID));
 			sqlExecutor.execute(Queries.getDeleteRowStatement(TABLE_MEALS, COLUMN_MEAL_ID, mealID));
 			System.out.println("Meal with id = \"" + mealID + "\" deleted");
 		} else System.out.println("meal with id = \"" + mealID + "\" doesn't exist");
 	}
 
 	private boolean mealExists() {
-		return sqlExecutor.execute((Queries.getSelectExistsStatement(Queries.getSelectRowStatement(TABLE_MEALS,COLUMN_MEAL_NAME,meal.getName())))).equals("t");
+		return sqlExecutor.execute((Queries.getSelectExistsStatement(
+			Queries.getSelectRowStatement(TABLE_MEALS, COLUMN_MEAL_NAME, meal.getName())))).equals("t");
 	}
 
 	private List<String> convertStringToList(String string) {
 		var al = Arrays.asList(string.split(System.lineSeparator()));
 		return al.stream().filter(a -> !a.isBlank()).collect(Collectors.toList());
 	}
+
+	private void buildAndPrintMealsTable(List<String> meals, List<String> ingredientsForEachMeal) {
+		var mealsTable = new StringJoiner(System.lineSeparator());
+		for (var mealIndex = 0; mealIndex < meals.size(); mealIndex++) {
+			mealsTable.add(meals.get(mealIndex) + VERTICAL + ingredientsForEachMeal.get(mealIndex));
+		}
+		if (mealsTable.toString().isBlank()) System.out.println("No meals yet");
+		else System.out.println(mealsTable);
+	}
+
+	private List<String> getAllMeals() {
+		return convertStringToList(
+			sqlExecutor.execute(Queries.getSelectAllColumnsStatement(TABLE_MEALS)));
+	}
+
+	private List<String> getEachMealIngredientsList(){
+		var ingredientsForEachMeal = new ArrayList<String>();
+		//
+		getAllMealIDs().forEach(mealID -> {
+			var ingredients = new StringJoiner(COMMA);
+			getAllIngredientIDs(mealID).forEach(ingredientID -> {
+				ingredients.add(sqlExecutor.execute(Queries.getSelectFieldByValueStatement(
+					TABLE_INGREDIENTS, COLUMN_INGREDIENT_NAME, COLUMN_INGREDIENT_ID, ingredientID)));
+			});
+			ingredientsForEachMeal.add(ingredients.toString());
+		});
+		return ingredientsForEachMeal;
+	}
+
+	private List<String> getAllMealIDs() {
+		return convertStringToList(
+			sqlExecutor.execute(Queries.getSelectColumnStatement(TABLE_MEALS, COLUMN_MEAL_ID)));
+	}
+
+	private List<String> getAllIngredientIDs(String mealID) {
+		return convertStringToList(sqlExecutor.execute(
+			Queries.getSelectFieldByValueStatement(TABLE_MEAL_TO_INGREDIENT, COLUMN_INGREDIENT_ID,
+				COLUMN_MEAL_ID, mealID)));
+	}
+
+
 }

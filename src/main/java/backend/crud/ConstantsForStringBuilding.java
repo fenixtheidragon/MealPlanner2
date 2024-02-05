@@ -19,4 +19,6 @@ public class ConstantsForStringBuilding {
     public final static String SPACE = " ";
     public final static String EQUALS = "=";
     public final static String COMMA = ",";
+    public final static String VERTICAL = "|";
+    public final static String EMPTY = "";
 }
