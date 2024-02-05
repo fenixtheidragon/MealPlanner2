@@ -41,6 +41,7 @@ public class Queries {
 
 	public static String getInsertIntoStatement(String table, List<String> columns,
 		List<String> values) {
+		//
 		clearStringJoiner();
 		sj.add(INSERT).add(INTO).add(table).add(LEFT_PAR);
 		var sizeHelper = columns.size();
@@ -55,6 +56,13 @@ public class Queries {
 			addComma(sizeHelper, a);
 		}
 		sj.add(RIGHT_PAR).add(SEMICOL);
+		return sj.toString();
+	}
+
+	public static String getInsertIntoStatement(String table, String column, String value) {
+		clearStringJoiner();
+		sj.add(INSERT).add(INTO).add(table).add(LEFT_PAR).add(column).add(RIGHT_PAR)
+			.add(VALUES).add(LEFT_PAR).add(value).add(RIGHT_PAR).add(SEMICOL);
 		return sj.toString();
 	}
 
