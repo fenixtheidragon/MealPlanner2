@@ -3,12 +3,13 @@ package backend;
 import lombok.Getter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 public class Meal {
 	private String name;
 	private MealType category;
-	private ArrayList<String> ingredients;
+	private List<String> ingredients;
 
 	public Meal() {
 		this.name = "";
@@ -28,7 +29,7 @@ public class Meal {
 		if (input.matches("[a-zA-Z\\d]+(\\s*,\\s*[a-zA-Z\\d]+)*")) {
 			this.ingredients = new ArrayList<>();
 			String[] ingredients = input.split(",");
-			for (String ingredient : ingredients) {
+			for (var ingredient : ingredients) {
 				ingredient = ingredient.trim();
 				if (!ingredient.isBlank()) this.ingredients.add(ingredient);
 			}

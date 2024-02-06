@@ -31,7 +31,7 @@ public class Queries {
 		clearStringJoiner();
 		sj.add(statement.substring(0, statement.length() - 2))
 			.add(getWhereColumnEqualsValue(column2, value));
-		System.out.println(sj);
+		//System.out.println(sj);
 		return sj.toString();
 	}
 
@@ -62,7 +62,7 @@ public class Queries {
 	public static String getInsertIntoStatement(String table, String column, String value) {
 		clearStringJoiner();
 		sj.add(INSERT).add(INTO).add(table).add(LEFT_PAR).add(column).add(RIGHT_PAR)
-			.add(VALUES).add(LEFT_PAR).add(value).add(RIGHT_PAR).add(SEMICOL);
+			.add(VALUES).add(LEFT_PAR).add(addApostrophes(value)).add(RIGHT_PAR).add(SEMICOL);
 		return sj.toString();
 	}
 

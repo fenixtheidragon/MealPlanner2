@@ -88,7 +88,7 @@ public class WeeklyPlanMenu extends Menu implements IMenu {
 					COLUMN_DAY, day
 				)));
 			System.out.println("Choose meals for this day (IDs in csv format): ");
-			mealMenu.showMealsOption();
+			mealMenu.showMeals();
 			String meals = getScanner().nextLine();
 			ArrayList<String> mealsAL =
 				Arrays.stream(meals.split(",")).collect(Collectors.toCollection(ArrayList::new));
