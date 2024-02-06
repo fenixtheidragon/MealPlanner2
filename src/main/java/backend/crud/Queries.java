@@ -25,13 +25,12 @@ public class Queries {
 		return getSelectColumnStatement(table, ALL);
 	}
 
-	public static String getSelectFieldByValueStatement(String table, String column1, String column2,
-		String value) {
+	public static String getSelectFieldByValueStatement(
+		String table, String column1, String column2, String value) {
 		var statement = getSelectColumnStatement(table, column1);
 		clearStringJoiner();
 		sj.add(statement.substring(0, statement.length() - 2))
 			.add(getWhereColumnEqualsValue(column2, value));
-		//System.out.println(sj);
 		return sj.toString();
 	}
 
@@ -39,8 +38,8 @@ public class Queries {
 		return getSelectFieldByValueStatement(table, ALL, column, value);
 	}
 
-	public static String getInsertIntoStatement(String table, List<String> columns,
-		List<String> values) {
+	public static String getInsertIntoStatement(
+		String table, List<String> columns, List<String> values) {
 		//
 		clearStringJoiner();
 		sj.add(INSERT).add(INTO).add(table).add(LEFT_PAR);
@@ -66,15 +65,11 @@ public class Queries {
 		return sj.toString();
 	}
 
-	private static String addApostrophes(String initial) {
-		return APSTRPH + initial + APSTRPH;
-	}
-
-	//getUpdateForSelectRow
-	public static String getUpdateForFieldStatement(String table, String column1, String value1,
-		String column2, String value2) {
+	public static String getUpdateForFieldStatement(
+		String table, String column1, String value1, String column2, String value2) {
+		//
 		return new StringJoiner(" ").add(UPDATE).add(table).add(SET).add(column1).add(EQUALS)
-			.add(APSTRPH + value1 + APSTRPH).add(getWhereColumnEqualsValue(column2, value2)).toString();
+			.add(addApostrophes(value1)).add(getWhereColumnEqualsValue(column2, value2)).toString();
 	}
 
 	public static String getDeleteRowStatement(String table, String column, String value) {
@@ -89,12 +84,16 @@ public class Queries {
 		return sj.toString();
 	}
 
+	private static String addApostrophes(String initial) {
+		return APSTRPH + initial + APSTRPH;
+	}
+
 	private static void clearStringJoiner() {
 		sj = new StringJoiner(SPACE);
 	}
 
 	private static String getWhereColumnEqualsValue(String column, String value) {
-		return new StringJoiner((" ")).add(WHERE).add(column).add(EQUALS).add(APSTRPH + value + APSTRPH)
+		return new StringJoiner((" ")).add(WHERE).add(column).add(EQUALS).add(addApostrophes(value))
 			.add(SEMICOL).toString();
 	}
 

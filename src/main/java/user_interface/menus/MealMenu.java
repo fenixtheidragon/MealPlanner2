@@ -228,7 +228,7 @@ public class MealMenu extends Menu implements IMenu {
 
 	private void enterIngredients() {
 		String ingredients = EMPTY;
-		while (!meal.setIngredients(ingredients)) {
+		while (!meal.setIngredientsIfCorrect(ingredients)) {
 			System.out.print("Enter meal's ingredients in csv format: ");
 			ingredients = getScanner().nextLine();
 		}

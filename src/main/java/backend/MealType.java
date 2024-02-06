@@ -3,6 +3,8 @@ package backend;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import static backend.crud.ConstantsForStringBuilding.SEMICOL;
+
 @Getter
 @RequiredArgsConstructor
 public enum MealType {
@@ -19,7 +21,7 @@ public enum MealType {
 	private final String number;
 
 	public static MealType getMealTypeByInput(String input) {
-		for (MealType type : MealType.values()) {
+		for (var type : MealType.values()) {
 			if (type.getNumber().equals(input)) {
 				return type;
 			}
@@ -28,9 +30,9 @@ public enum MealType {
 	}
 
 	public static String getDescription() {
-		StringBuilder sb = new StringBuilder();
-		for (MealType type : MealType.values()) {
-			sb.append(type.getNumber()).append(". ").append(type.getName()).append(";").append(System.lineSeparator());
+		var sb = new StringBuilder();
+		for (var mealType : MealType.values()) {
+			sb.append(mealType.getNumber()).append(". ").append(mealType.getName()).append(SEMICOL).append(System.lineSeparator());
 		}
 		sb.delete(sb.length()-1,sb.length());
 		return sb.toString();

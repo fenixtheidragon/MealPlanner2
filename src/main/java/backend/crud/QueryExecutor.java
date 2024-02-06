@@ -3,15 +3,15 @@ package backend.crud;
 import static backend.crud.DBNames.*;
 import static backend.crud.ConstantsForStringBuilding.*;
 
-import backend.ExceptionLogger;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
 import java.util.List;
 import java.util.Properties;
 import java.util.StringJoiner;
 
-@Getter
+@Getter @Slf4j
 public class QueryExecutor {
 	private final String url;
 	private final Properties properties;
@@ -30,7 +30,10 @@ public class QueryExecutor {
 
 	public String execute(String sql) {
 		this.sql = sql;
-		String result = connectAndQuery();
+		var result = connectAndQuery();
+		if (result == null) {
+			return "Exception occurred";
+		}
 		if (result.contains("duplicate key value violates unique constraint")) {
 			return "duplicate key value";
 		} else {
@@ -39,42 +42,49 @@ public class QueryExecutor {
 	}
 
 	private String connectAndQuery() {
-		try (Connection connection = DriverManager.getConnection(url, properties)) {
+		try (var connection = DriverManager.getConnection(url, properties)) {
 			if (connection.isValid(5)) {
-				try (Statement statement = connection.createStatement()) {
+				try (var statement = connection.createStatement()) {
 					this.statement = statement;
 					return query();
 				}
-			} else return "Connection is invalid.";
+			} else {
+				return "Connection is invalid.";
+			}
 		} catch (SQLException e) {
-			return ExceptionLogger.logAsError(e, "Connection/statement/query exception:");
+			log.error(e.getMessage(),e);
+			return null;
 		}
 	}
 
 	private String query() throws SQLException {
-		for (String keyWord : queryKeyWords) {
+		for (var keyWord : queryKeyWords) {
 			if (sql.contains(keyWord)) {
-				if (sql.contains(SELECT)) return querySelect();
-				else return String.valueOf(executeUpdate(sql));
+				if (sql.contains(SELECT)) {
+					return querySelect();
+				}
+				else {
+					return String.valueOf(executeUpdate(sql));
+				}
 			}
 		}
 		return "Invalid SQL query.";
 	}
 
 	private String querySelect() {
-		try (ResultSet resultSet = executeQuery(sql)) {
+		try (var resultSet = executeQuery(sql)) {
 			this.resultSet = resultSet;
 			return getQuerySelectResult();
 		} catch (SQLException e) {
-			ExceptionLogger.logAsError(e, "querySelect exception:");
+			log.error(e.getMessage(),e);
 			return null;
 		}
 	}
 
 	private String getQuerySelectResult() throws SQLException {
-		StringJoiner result = new StringJoiner(System.lineSeparator());
+		var result = new StringJoiner(System.lineSeparator());
 		while (resultSet.next()) {
-			tempResult = new StringJoiner("|");
+			tempResult = new StringJoiner(VERTICAL);
 			if (sql.contains(SELECT + SPACE + EXISTS)) {
 				ifQueryContainsColumnAddToStringJoinerFromResultSet(List.of(EXISTS));
 			} else if (sql.contains(TABLE_MEALS)) {
@@ -94,11 +104,11 @@ public class QueryExecutor {
 		return result.toString();
 	}
 
-	//Переделать, чтобы не была завязана логика на ошибку - вроде сделал
 	private void ifQueryContainsColumnAddToStringJoinerFromResultSet(List<String> columnNames)
 		throws SQLException {
+		//
 		if (sql.contains(ALL)) {
-			for (int a = 1; a <= columnNames.size(); a++) {
+			for (var a = 1; a <= columnNames.size(); a++) {
 				tempResult.add(resultSet.getString(a));
 			}
 		} else {
