@@ -1,15 +1,19 @@
 package user_interface.menus;
 
 import lombok.Getter;
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Pattern;
+
+import static backend.crud.ConstantsForStringBuilding.SEMICOL;
 
 @Getter
 public class Menu implements IMenu{
     private final String NAME;
     private final List<MenuOption> menuOptions;
     private final Scanner scanner;
+    private final Pattern digit = Pattern.compile("\\d");
 
     public Menu(String name, List<MenuOption> menuOptions, Scanner scanner) {
         NAME = name;
@@ -31,8 +35,8 @@ public class Menu implements IMenu{
     }
 
     public MenuOption getMenuOptionBy(String input) {
-        if (input.matches("\\d")) {
-            for (int a = 1; a <= menuOptions.size(); a++) {
+        if (digit.matcher(input).matches()) {
+            for (var a = 1; a <= menuOptions.size(); a++) {
                 if (input.equals(String.valueOf(a))) {
                     return menuOptions.get(a - 1);
                 }
@@ -46,7 +50,7 @@ public class Menu implements IMenu{
         var sb = new StringBuilder(NAME);
         //line format: 1. menuOption;
         for (var a = 1; a <= menuOptions.size(); a++) {
-            sb.append(System.lineSeparator()).append(a).append(". ").append(menuOptions.get(a - 1)).append(";");
+            sb.append(System.lineSeparator()).append(a).append(". ").append(menuOptions.get(a - 1)).append(SEMICOL);
         }
         return sb.toString();
     }

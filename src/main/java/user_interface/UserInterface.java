@@ -12,10 +12,9 @@ public class UserInterface {
 
 	public void start() {
 		try (Scanner scanner = new Scanner(System.in)) {
-			MainMenuSystem mainMenuSystem = new MainMenuSystem(scanner);
+			var mainMenuSystem = new MainMenuSystem(scanner);
 			mainMenuSystem.open();
 		} catch (Exception e) {
-			//ExceptionLogger.logAsError(e, "Catch-all exception:");
 			log.error(e.getMessage(), e);
 		}
 	}
