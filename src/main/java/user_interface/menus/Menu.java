@@ -50,7 +50,10 @@ public class Menu implements IMenu{
         var sb = new StringBuilder(NAME);
         //line format: 1. menuOption;
         for (var a = 1; a <= menuOptions.size(); a++) {
-            sb.append(System.lineSeparator()).append(a).append(". ").append(menuOptions.get(a - 1)).append(SEMICOL);
+            sb.append(System.lineSeparator())
+              .append(a).append(". ")
+              .append(menuOptions.get(a - 1))
+              .append(SEMICOL);
         }
         return sb.toString();
     }

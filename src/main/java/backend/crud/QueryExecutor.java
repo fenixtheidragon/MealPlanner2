@@ -103,7 +103,7 @@ public class QueryExecutor {
 		}
 		return result.toString();
 	}
-
+// TODO naming too long
 	private void ifQueryContainsColumnAddToStringJoinerFromResultSet(List<String> columnNames)
 		throws SQLException {
 		//

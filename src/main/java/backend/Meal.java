@@ -10,7 +10,7 @@ import static backend.crud.ConstantsForStringBuilding.COMMA;
 
 @Getter
 public class Meal {
-	Pattern correctIngredients = Pattern.compile("[a-zA-Z\\d]+(\\s*,\\s*[a-zA-Z\\d]+)*");
+	private final Pattern correctIngredients = Pattern.compile("[a-zA-Z\\d]+(\\s*,\\s*[a-zA-Z\\d]+)*");
 	private String name;
 	private MealType category;
 	private List<String> ingredients;

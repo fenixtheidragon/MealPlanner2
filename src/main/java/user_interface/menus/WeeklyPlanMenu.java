@@ -13,10 +13,13 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class WeeklyPlanMenu extends Menu implements IMenu {
-	private final String[] daysOfWeek =
-		new String[]{"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+	private static final String[] daysOfWeek;
 	private final QueryExecutorForMealsDB sqlExecutor;
 	private final MealMenu mealMenu;
+
+	static{
+		daysOfWeek = new String[]{"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+	}
 
 	public WeeklyPlanMenu(String name, List<MenuOption> menuOptions, Scanner scanner) {
 		super(name, menuOptions, scanner);
@@ -47,9 +50,9 @@ public class WeeklyPlanMenu extends Menu implements IMenu {
 	}
 
 	private void showWeeklyPlan() {
-		for (var day : daysOfWeek) {
-			System.out.println(day);
-			printMeals(day);
+		for (var dayNumber = 0; dayNumber < daysOfWeek.length; dayNumber++) {
+			System.out.println((dayNumber+1)+". " + daysOfWeek[dayNumber]);
+			printMeals(daysOfWeek[dayNumber]);
 		}
 	}
 
@@ -96,7 +99,8 @@ public class WeeklyPlanMenu extends Menu implements IMenu {
 
 	private void delete(String day) {
 		sqlExecutor.execute(
-			Queries.getDeleteRowStatement(TABLE_WEEKLY_PLAN, COLUMN_DAY, day));
+			Queries.getDeleteRowStatement(TABLE_WEEKLY_PLAN, COLUMN_DAY, day)
+		);
 	}
 
 	private boolean areNotNull(String dayToCopy, String dayToPasteTo) {

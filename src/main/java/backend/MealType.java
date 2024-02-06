@@ -32,9 +32,12 @@ public enum MealType {
 	public static String getDescription() {
 		var sb = new StringBuilder();
 		for (var mealType : MealType.values()) {
-			sb.append(mealType.getNumber()).append(". ").append(mealType.getName()).append(SEMICOL).append(System.lineSeparator());
+			sb.append(mealType.getNumber())
+				.append(". ").
+				append(mealType.getName()).
+				append(SEMICOL)
+				.append(System.lineSeparator());
 		}
-		sb.delete(sb.length()-1,sb.length());
-		return sb.toString();
+		return sb.delete(sb.length() - 1, sb.length()).toString();
 	}
 }

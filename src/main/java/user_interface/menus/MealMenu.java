@@ -159,12 +159,14 @@ public class MealMenu extends Menu implements IMenu {
 			Queries.getInsertIntoStatement(
 				TABLE_MEALS, List.of(COLUMN_MEAL_NAME, COLUMN_CATEGORY),
 				List.of(meal.getName(), meal.getCategory().getName())
-			));
+			)
+		);
 	}
 
 	private boolean mealExists() {
 		return queryExecutor.execute((Queries.getSelectExistsStatement(
-			Queries.getSelectRowStatement(TABLE_MEALS, COLUMN_MEAL_NAME, meal.getName())))).equals("t");
+			Queries.getSelectRowStatement(TABLE_MEALS, COLUMN_MEAL_NAME, meal.getName()))
+			)).equals("t");
 	}
 
 	private List<String> convertStringToList(String string) {

@@ -67,6 +67,36 @@ public class IngredientsMenu extends Menu implements IMenu {
 		}
 	}
 
+	private void deleteIngredients() {
+		showIngredients();
+		System.out.print("Enter id of ingredient you want to delete: ");
+		String ingredientID = getScanner().nextLine();
+		if (doesIngredientExist(ingredientID)) {
+			handleIngredientDeletion(ingredientID);
+		} else {
+			System.out.println("No ingredient with id = \"" + ingredientID + "\"");
+		}
+	}
+
+	private void handleIngredientDeletion(String ingredientID) {
+		if (isIngredientInRecipe(ingredientID)) {
+		System.out.println(
+			"Ingredient " + ingredientID + " is in the recipe, so can not be deleted");
+	} else {
+		delete(ingredientID);
+		System.out.println("Ingredient with id = " + ingredientID + " was deleted");
+	}
+
+	}
+
+	private void delete(String ingredientID) {
+		sqlExecutor.execute(
+			Queries.getDeleteRowStatement(
+				TABLE_INGREDIENTS, COLUMN_INGREDIENT_ID, ingredientID
+			)
+		);
+	}
+
 	private void edit(String ingredientId) {
 		boolean condition = true;
 		while (condition) {
@@ -81,30 +111,17 @@ public class IngredientsMenu extends Menu implements IMenu {
 		}
 	}
 
-	private void deleteIngredients() {
-		showIngredients();
-		System.out.print("Enter id of ingredient you want to delete: ");
-		String ingredientID = getScanner().nextLine();
-		if (doesIngredientExist(ingredientID)) {
-			if (sqlExecutor.execute(
-				Queries.getDeleteRowStatement(
-					TABLE_INGREDIENTS, COLUMN_INGREDIENT_ID, ingredientID)
-			).matches(("\\d+"))) {
-				System.out.println("Ingredient with id = " + ingredientID + " was deleted");
-			} else {
-				System.out.println("Ingredient is in the recipe, so can not be deleted");
-			}
-		} else {
-			System.out.println("No ingredient with id = \"" + ingredientID + "\"");
-		}
+	private boolean isIngredientInRecipe(String ingredientID) {
+		return sqlExecutor.execute(Queries.getSelectExistsStatement(Queries.getSelectRowStatement(
+			TABLE_MEAL_TO_INGREDIENT, COLUMN_INGREDIENT_ID, ingredientID))).equals("t");
 	}
 
 	private void printEditMenu() {
 		System.out.println("""
-                      What do you want to edit(enter the number)?
-                      1)name;
-                      2)amount;
-                      3)save edit""");
+                     What do you want to edit(enter the number)?
+                     1)name;
+                     2)amount;
+                     3)save edit""");
 	}
 
 	private boolean doesIngredientExist(String ingredientID) {
@@ -112,7 +129,8 @@ public class IngredientsMenu extends Menu implements IMenu {
 			Queries.getSelectExistsStatement(
 				Queries.getSelectRowStatement(
 					TABLE_INGREDIENTS, COLUMN_INGREDIENT_ID, ingredientID)
-			)).equals("t");
+			)
+		).equals("t");
 	}
 
 	private void enterName() {
@@ -133,8 +151,8 @@ public class IngredientsMenu extends Menu implements IMenu {
 					ingredient.getName(), COLUMN_INGREDIENT_ID, ingredientId));
 		}
 		if (ingredient.getAmount() != 0) {
-			sqlExecutor.execute(Queries.getUpdateForFieldStatement(TABLE_INGREDIENTS,
-				COLUMN_AMOUNT_GRAMS,
+			sqlExecutor.execute(
+				Queries.getUpdateForFieldStatement(TABLE_INGREDIENTS,	COLUMN_AMOUNT_GRAMS,
 				String.valueOf(ingredient.getAmount()), COLUMN_INGREDIENT_ID, ingredientId));
 		}
 		return false;

@@ -10,15 +10,14 @@ public class Queries {
 
 	public static String getSelectExistsStatement(String selectStatement) {
 		clearStringJoiner();
-		sj.add(SELECT).add(EXISTS).add(LEFT_PAR)
-			.add(selectStatement.substring(0, selectStatement.length() - 1)).add(RIGHT_PAR).add(SEMICOL);
-		return sj.toString();
+	return	sj.add(SELECT).add(EXISTS).add(LEFT_PAR)
+			.add(selectStatement.substring(0, selectStatement.length() - 1))
+			.add(RIGHT_PAR).add(SEMICOL).toString();
 	}
 
 	public static String getSelectColumnStatement(String table, String column) {
 		clearStringJoiner();
-		sj.add(SELECT).add(column).add(FROM).add(table).add(SEMICOL);
-		return sj.toString();
+		return	sj.add(SELECT).add(column).add(FROM).add(table).add(SEMICOL).toString();
 	}
 
 	public static String getSelectAllColumnsStatement(String table) {
@@ -29,17 +28,17 @@ public class Queries {
 		String table, String column1, String column2, String value) {
 		var statement = getSelectColumnStatement(table, column1);
 		clearStringJoiner();
-		sj.add(statement.substring(0, statement.length() - 2))
-			.add(getWhereColumnEqualsValue(column2, value));
-		return sj.toString();
+		return sj.add(statement.substring(0, statement.length() - 2))
+			.add(getWhereColumnEqualsValue(column2, value))
+		 .toString();
 	}
 
 	public static String getSelectRowStatement(String table, String column, String value) {
 		return getSelectFieldByValueStatement(table, ALL, column, value);
 	}
 
-	public static String getInsertIntoStatement(
-		String table, List<String> columns, List<String> values) {
+	public static String getInsertIntoStatement(String table, List<String> columns,
+		List<String> values) {
 		//
 		clearStringJoiner();
 		sj.add(INSERT).add(INTO).add(table).add(LEFT_PAR);
