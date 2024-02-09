@@ -5,7 +5,6 @@ DB_EXISTENCE=$(psql -U postgres -h localhost -c "SELECT EXISTS(SELECT FROM pg_da
 if [ "$(echo "$DB_EXISTENCE" | grep f)" = ' f' ];
   then
     psql -U postgres -h localhost -a -f mealPlannerBuildDataBaseScript.sql
-    java -jar MealPlanner2-1.0-SNAPSHOT.jar
-  else
-    echo damn
 fi
+
+java -jar MealPlanner2-1.0-SNAPSHOT.jar
