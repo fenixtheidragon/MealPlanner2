@@ -11,6 +11,7 @@ import java.util.Scanner;
 public class UserInterface {
 
 	public void start() {
+		log.debug("Program started!");
 		try (Scanner scanner = new Scanner(System.in)) {
 			var mainMenuSystem = new MainMenuSystem(scanner);
 			mainMenuSystem.open();

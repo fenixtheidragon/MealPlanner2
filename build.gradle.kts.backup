@@ -1,6 +1,11 @@
 plugins {
     id("java")
     id("io.freefair.lombok") version "8.4"
+    application
+}
+
+application {
+    mainClass
 }
 
 group = "org.example"
@@ -17,8 +22,18 @@ dependencies {
     implementation("org.slf4j:slf4j-api:1.7.30")
     implementation("org.slf4j:slf4j-simple:1.7.30")
     // https://mvnrepository.com/artifact/org.postgresql/postgresql
-    implementation("org.postgresql:postgresql:42.1.4")
+    implementation("org.postgresql:postgresql:42.5.1")
+}
 
+
+tasks.withType<Jar> {
+    manifest {
+        attributes["Main-Class"] = "org.example.Main"
+    }
+
+    from {
+        configurations.runtimeClasspath.configure(if it.isDirectory)
+    }
 }
 
 tasks.test {
