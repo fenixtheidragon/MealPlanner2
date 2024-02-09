@@ -1,4 +1,4 @@
-CREATE IF NOT EXISTS DATABASE meals_db;
+CREATE DATABASE meals_db;
 
 \c meals_db
 

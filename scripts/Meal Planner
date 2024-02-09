@@ -1,3 +1,11 @@
 #!/bin/bash
-psql -U postgres -h localhost -a -f mealPlannerBuildDataBaseScript.sql
-java -jar MealPlanner2-1.0-SNAPSHOT.jar
+
+DB_EXISTENCE=$(psql -U postgres -h localhost -c "SELECT EXISTS(SELECT FROM pg_database WHERE datname = 'meals_db');")
+
+if [ "$(echo "$DB_EXISTENCE" | grep f)" = ' f' ];
+  then
+    psql -U postgres -h localhost -a -f mealPlannerBuildDataBaseScript.sql
+    java -jar MealPlanner2-1.0-SNAPSHOT.jar
+  else
+    echo damn
+fi
