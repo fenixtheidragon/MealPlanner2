@@ -21,3 +21,9 @@ PRIMARY KEY(meal_id,ingredient_id),
 FOREIGN KEY(meal_id) REFERENCES meals(meal_id),
 FOREIGN KEY(ingredient_id) REFERENCES ingredients(ingredient_id)
 );
+
+create table weekly_plan (
+day varchar(10) PRIMARY KEY,
+meal_id INT,
+FOREIGN KEY REFERENCES meals(meal_id)
+);
